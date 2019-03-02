@@ -1,0 +1,30 @@
+{
+  "name": "hybridMatchMaker",
+  "description": "JavaScript end of the smm1.",
+  "version": "1.4.7",
+  "author": "GPII",
+  "bugs": "http://issues.gpii.org/",
+  "homepage": "http://gpii.net/",
+  "dependencies": {
+    "euclidean-distance": "1.0.0",
+    "node-rest-client": "~0.7.5",
+    "when": "~1.8.1",
+    "request": "2.81.0"
+  },
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "http://www.opensource.org/licenses/BSD-3-Clause"
+    }
+  ],
+  "keywords": [
+    "matchmaker",
+    "framework",
+    "evented"
+  ],
+  "repository": "git://github.com/GPII/statisticalMatchMaker.git",
+  "main": "./bin/statisticalMatchMaker.js",
+  "engines": {
+    "node": ">=0.1.9"
+  }
+}

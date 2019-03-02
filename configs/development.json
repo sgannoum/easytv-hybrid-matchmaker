@@ -1,0 +1,22 @@
+{
+    "type": "hybridMatchmaker.development",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "logging": true,
+                    "port": 8082,
+                    "family": "IPv4",
+					"address": "160.40.49.218",
+					"components": {
+						"statisticalMatchmaker": {
+							"type": "easytv.hybridMatchmaker"
+						}
+					}
+                }
+            }
+        }
+    }
+}
