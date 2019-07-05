@@ -7,7 +7,7 @@
                 "type": "kettle.server",
                 "options": {
                     "logging": true,
-                    "port": 8082,
+                    "port": 8081,
                     "family": "IPv4",
 					"address": "160.40.49.218",
 					"components": {

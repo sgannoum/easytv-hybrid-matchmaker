@@ -72,7 +72,10 @@ fluid.defaults("easytv.matchMaker.hybrid.optiontHandler", {
 });
 
 var url = require('url')
-var HybridMatchMakerImpl = require('../lib/HybridMatchMakerImpl.js')
+var dimensions = require('../lib/HybridMatchMakerData.js').dimensionsHandlers
+var HBMMImpl = require('../lib/HybridMatchMakerImpl.js').HBMMImpl
+var hbmmImpl = new HBMMImpl(dimensions, [0.7, 0.3])
+
 /**
  * A HTTP POST handler for route /match
  */
@@ -82,16 +85,13 @@ statMatch.postHandler = function (request) {
 		var user_profile = request.req.body
 		
 		// Rejection tests
-		if (!("general" in user_profile)) { fluid.log("Invalid SMM payload: 'general' missing."); request.events.onError({message: "Invalid SMM payload: 'general' missing."}); return;};
-		if (!("visual" in user_profile)) { fluid.log("Invalid SMM payload: 'visual' missing."); request.events.onError({message: "Invalid SMM payload: 'visual' missing."}); return; };
-		if (!("auditory" in user_profile)) { fluid.log("Invalid SMM payload: 'auditory' missing."); request.events.onError({message: "Invalid SMM payload: 'auditory' missing."}); return; };
 		if (!("user_preferences" in user_profile)) { fluid.log("Invalid SMM payload: 'user_preferences' missing."); request.events.onError({message: "Invalid SMM payload: 'user_preferences' missing."}); return;};
 		
 		request.res.header('Access-Control-Allow-Origin', '*');
 		request.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 		request.res.header('Access-Control-Allow-Headers', 'Content-Type');
 		
-		HybridMatchMakerImpl.hybridInference(request, user_profile)
+		hbmmImpl.hybridInference(request, user_profile)
 		
 	} catch(err) {
 		fluid.log("====== SMM ERROR ======");
