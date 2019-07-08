@@ -21,8 +21,8 @@ var fluid = require("C:\\Users\\salgan\\git\\universal\\node_modules\\infusion")
 easytv = fluid.registerNamespace("easytv");
 
 var matchMaker = fluid.registerNamespace("easytv.matchMaker");
-var stat = fluid.registerNamespace("easytv.matchMaker.hybrid");
-var statMatch = fluid.registerNamespace("easytv.matchMaker.hybrid.match");
+var hybrid = fluid.registerNamespace("easytv.matchMaker.hybrid");
+var hybridMatch = fluid.registerNamespace("easytv.matchMaker.hybrid.match");
 
 
 // Specify kettel.app invocation path and invocation method
@@ -71,15 +71,16 @@ fluid.defaults("easytv.matchMaker.hybrid.optiontHandler", {
     }
 });
 
+
+fluid.require("../lib//HybridMatchMakerData.js", require);
 var url = require('url')
-var dimensions = require('../lib/HybridMatchMakerData.js').dimensionsHandlers
 var HBMMImpl = require('../lib/HybridMatchMakerImpl.js').HBMMImpl
-var hbmmImpl = new HBMMImpl(dimensions, [0.7, 0.3])
+var hbmmImpl = new HBMMImpl(hybrid.dimensionsHandlers, [0.7, 0.3])
 
 /**
  * A HTTP POST handler for route /match
  */
-statMatch.postHandler = function (request) {
+hybridMatch.postHandler = function (request) {
 	try 
 	{
 		var user_profile = request.req.body
@@ -105,7 +106,7 @@ statMatch.postHandler = function (request) {
 /**
  * A HTTP GET handler for route /match
  */
-statMatch.getHandler = function (request) {
+hybridMatch.getHandler = function (request) {
 
 	request.res.header('Access-Control-Allow-Origin', '*');
 	request.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -118,7 +119,7 @@ statMatch.getHandler = function (request) {
  * A HTTP Options handler for route /match
  * Handler of CORS
  */
-statMatch.optionHandler = function (request) {
+hybridMatch.optionHandler = function (request) {
 
 	request.res.header('Access-Control-Allow-Origin', '*');
 	request.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
