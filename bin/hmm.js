@@ -17,7 +17,7 @@ the European Union's Seventh Framework Programme (FP7/2007-2013)
 under grant agreement no. 289016.
 */
 
-var fluid = require("C:\\Users\\salgan\\git\\universal"),
+var fluid = require("gpii-universal"),
     kettle = fluid.registerNamespace("kettle");
 
 fluid.require("../REST_Full/HybridMatchMaker.js", require);

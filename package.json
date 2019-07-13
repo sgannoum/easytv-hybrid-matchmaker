@@ -7,6 +7,7 @@
   "homepage": "http://gpii.net/",
   "dependencies": {
     "euclidean-distance": "1.0.0",
+    "gpii-universal": "0.3.0-dev.20180221T093422Z.50833c1",
     "node-rest-client": "~0.7.5",
     "when": "~1.8.1",
     "request": "2.81.0"

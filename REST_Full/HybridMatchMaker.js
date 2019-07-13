@@ -17,7 +17,7 @@ under grant agreement no. 761999.
 
 
 
-var fluid = require("C:\\Users\\salgan\\git\\universal\\node_modules\\infusion"),
+var fluid = require("gpii-universal"),
 easytv = fluid.registerNamespace("easytv");
 
 var matchMaker = fluid.registerNamespace("easytv.matchMaker");
