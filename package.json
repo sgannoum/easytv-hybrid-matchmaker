@@ -1,16 +1,27 @@
 {
   "name": "hybridMatchMaker",
-  "description": "JavaScript end of the smm1.",
+  "description": "Hybrid matchmaker end point.",
   "version": "1.4.7",
-  "author": "GPII",
-  "bugs": "http://issues.gpii.org/",
-  "homepage": "http://gpii.net/",
+  "author": "EasyTV",
   "dependencies": {
-    "euclidean-distance": "1.0.0",
-    "gpii-universal": "0.3.0-dev.20180221T093422Z.50833c1",
-    "node-rest-client": "~0.7.5",
-    "when": "~1.8.1",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-routes-mapper": "^1.0.2",
+    "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.1",
     "request": "2.81.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "husky": "^0.14.3",
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.3",
+    "shx": "^0.2.2",
+    "supertest": "^3.0.0"
   },
   "licenses": [
     {
@@ -21,11 +32,10 @@
   "keywords": [
     "matchmaker",
     "framework",
-    "evented"
+    "EasyTV"
   ],
-  "repository": "git://github.com/GPII/statisticalMatchMaker.git",
-  "main": "./bin/statisticalMatchMaker.js",
-  "engines": {
-    "node": ">=0.1.9"
+  "scripts": {
+    "start": "npm run nodemon",
+    "production": "node ./REST_Full/RestAPI.js"
   }
 }
