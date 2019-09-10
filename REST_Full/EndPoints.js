@@ -10,12 +10,12 @@ const EndPoints = () => {
 		try 
 		{			
 			const user_profile = req.body;
-	
+			
 			// Rejection tests
 			if (!user_profile) { return res.status(500).json({ msg: 'No user profile' });};
 			
 			//infer profiles
-			 hbmmImpl.hybridInference(res, user_profile)
+			 hbmmImpl.hybridInference(req, res, user_profile)
 			
 		} catch(err) {
 	        console.log(err);

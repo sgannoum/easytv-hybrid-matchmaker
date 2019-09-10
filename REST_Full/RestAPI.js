@@ -50,7 +50,7 @@ app.use(bodyParser.json());
 
 
 //fill routes for express application
-app.use('/EasyTV_HBMM_Restful_WS/HBMM/', mappedOpenRoutes);
+app.use('/EasyTV_HBMM_Restful_WS', mappedOpenRoutes);
 
 server.listen(config.port, () => {
 	if (environment !== 'production' &&
@@ -59,7 +59,7 @@ server.listen(config.port, () => {
 	) {
 	 console.error(`NODE_ENV is set to ${environment}, but only production and development are valid.`);
 	 process.exit(1);
-	}
-	console.error('Server up, listening to port ' + config.port);
+	}	
+	console.log('Server up, listening to port ' + config.port);
 });
 
