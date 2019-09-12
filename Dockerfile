@@ -13,8 +13,8 @@ RUN ls -l
 RUN npm install --verbose
 
 # Expose tomcat port
-EXPOSE 8081
+EXPOSE 8087
 
 CMD ["npm", "run", "production"]
 
-#docker run -it --rm -p 8081:8082 rbmm:v1
+#docker run -it --rm -p 8087:8087  rbmm:v1
