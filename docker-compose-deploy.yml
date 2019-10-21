@@ -1,0 +1,63 @@
+version: '3.1'
+
+services:
+
+  stmm:
+    image: stmm:v1
+    networks:
+      - easytv_net
+    depends_on:
+      - stmm_rt
+    environment:
+      STMM_HOST: "stmm_rt"
+      STMM_PORT: "8077"
+      DB_HOST: "personalization_db"
+      DB_PORT: "3306"
+      DB_NAME: "easytv"
+      DB_USER: "easytv"
+      DB_PASSWORD: "/run/secrets/hpapidbroot_password"
+    stdin_open: true
+    tty: true
+    secrets:
+      - hpapidbroot_password
+    
+      
+  stmm_rt:
+    image: stmm_rt:v1
+    networks:
+      - easytv_net
+    environment:
+      PORT: "8077"
+
+  rbmm:
+    image: rbmm:v1
+    networks:
+      - easytv_net
+    environment:
+      PORT: "8080"
+
+  hbmm:
+    image: hbmm:v1
+    networks:
+      - easytv_net
+    depends_on:
+      - stmm_rt
+      - rbmm
+    environment:
+      STMM_HOST: "stmm_rt"
+      RBMM_HOST: "rbmm"
+      STMM_PORT: "8077"
+      RBMM_PORT: "8080"
+      PORT: "8087 "
+    ports:
+      - "8087:8087"
+
+
+secrets:
+  hpapidbroot_password:
+    external: true
+
+
+networks:
+  easytv_net:
+    external: true
