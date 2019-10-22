@@ -29,7 +29,7 @@ const WeigthsPersonalization = () => {
 		const user_id = req.body.user_id
 		const user_preferences = req.body.user_preferences
 		
-		console.log('user['+user_id+']: ',' personalize weigths')
+		console.log('user['+user_id+']: ','personalize weigths')
 
 		//update user weights
 		hbmmImpl.update_user_weights(user_id, user_preferences)

@@ -30,20 +30,19 @@ const ContextPersonalization = () => {
 				return res.status(500).json({ code: msg.missing_user_context.msg_code, 
 					  						  msg: msg.missing_user_context.msg_text });
 			}
-			
-			console.log('user['+user_id+']: ',' personalize context')
 
-			
 			var stmm_profile;
 			var rbmm_profile;
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
-						 
+			
+			console.log('user['+user_id+']: ',' personalize context')
+
 			var stmm_options = {
 				    method: 'POST',
 				    uri: urls.STMM_PERSONALIZE_CONTEXT,
-				    body: user_profile,
+				    body: req.body,
 				    json: true // Automatically stringifies the body to JSON
 			 };
 			
@@ -56,10 +55,9 @@ const ContextPersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+']: ',' STMM profile', response)
-
-
-					stmm_profile  = response;
+					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
+					
+					stmm_profile  = response.user_profile;
 					stmm_options.uri = urls.RBMM_PERSONALIZE_CONTEXT
 					return rp(stmm_options)
 					
@@ -71,11 +69,13 @@ const ContextPersonalization = () => {
 						return
 					}
 
-					console.log('user['+user_id+']: ',' RBMM profile', response)
-
+					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
 					
-					rbmm_profile  = response;
+					rbmm_profile  = response.user_profile;
 					var  hybrid_user_profile = hbmmImpl.personalize_context(user_id, user_profile, user_context, stmm_profile, rbmm_profile)
+					
+					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 

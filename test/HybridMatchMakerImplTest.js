@@ -14,7 +14,15 @@ var RBMM_user_profile = JSON.parse("{" +
 		"                        \"http://registry.easytv.eu/application/tts/audio/voice\": \"female\"," + 
 		"                        \"http://registry.easytv.eu/application/cs/cc/subtitles/font/color\": \"#ffffff\"" + 
 		"                    }" + 
-		"                }" + 
+		"                  }" + 
+		"                }," + 
+		"			\"recommanded_preferences\": {" + 
+		"                        \"http://registry.easytv.eu/common/volume\": 20," + 
+		"                        \"http://registry.easytv.eu/common/contrast\": 100," + 
+		"                        \"http://registry.easytv.eu/application/control/voice\": true," + 
+		"                        \"http://registry.easytv.eu/application/cs/audio/track\": \"en\"," + 
+		"                        \"http://registry.easytv.eu/application/tts/audio/voice\": \"male\"," + 
+		"                        \"http://registry.easytv.eu/application/cs/cc/subtitles/font/color\": \"#ffffff\"" + 
 		"            }" + 
 		"}");
 
@@ -61,10 +69,8 @@ function test_hybridPreferences(){
 	//check hybrid preference
 	assert (prefs2["http://registry.easytv.eu/common/volume"] == 9, "hybrid preference must be " + 9);
 
-	
 	//update weights
-	hybridMM.update_user_weights(user_id , user_profile)
-	
+	var new_weigths = hybridMM.update_user_weights(user_id , user_profile, STMM_user_profile, RBMM_user_profile, [0.5, 0.5])
 }
 
 //test_hybridPreference();

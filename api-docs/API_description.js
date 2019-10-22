@@ -2,8 +2,8 @@ module.exports = {
   openapi: '3.0.1',
   info: {
     version: '1.3.0',
-    title: 'Personalization',
-    description: 'EasyTV Personalization API'
+    title: 'EasyTV Personalization API',
+    description: 'Description of EasyTV Personalization API'
   },
   servers: [
     {
@@ -23,7 +23,7 @@ module.exports = {
     }
   ],
    paths: {
-    '/personalize/profile': {
+    '/EasyTV_HBMM_Restful_WS/personalize/profile': {
 	  post: {
         tags: ['Personalize profile'],
         description: 'Presonalize a user profile.',
@@ -32,7 +32,29 @@ module.exports = {
                 'application/json': {
                   schema: {
                 	  $ref: '#/components/schemas/personalize_profile'
-                  }
+                  },
+                  example: {
+                		    "user_id": 1,
+                			"user_profile": {
+                				"user_preferences": {
+                					"default": {"preferences": {
+                		                        "http://registry.easytv.eu/common/volume": 90,
+                		                        "http://registry.easytv.eu/common/contrast": 100,
+                		                        "http://registry.easytv.eu/application/control/voice": true,
+                		                        "http://registry.easytv.eu/application/cs/audio/track": "ca",
+                		                        "http://registry.easytv.eu/application/cs/ui/language": "en",
+                		                        "http://registry.easytv.eu/application/cs/audio/volume": 33,
+                		                        "http://registry.easytv.eu/application/cs/ui/text/size": "20",
+                		                        "http://registry.easytv.eu/application/tts/audio/speed": 0,
+                		                        "http://registry.easytv.eu/application/tts/audio/voice": "male",
+                		                        "http://registry.easytv.eu/application/cs/audio/eq/bass": -4,
+                		                        "http://registry.easytv.eu/application/cs/audio/eq/mids": 5,
+                		                        "http://registry.easytv.eu/application/tts/audio/volume": 90
+                					}}
+                				}
+                		  }
+                		
+                    }
                 }
               },
           required: true
@@ -51,35 +73,7 @@ module.exports = {
         }
       }
     },
-    '/personalize/weigths': {
-  	  post: {
-          tags: ['Personalize user weigths'],
-          description: 'Presonalize the user associated weights.',
-          requestBody: {
-              content: {
-                  'application/json': {
-                    schema: {
-                  	  $ref: '#/components/schemas/personalize_profile'
-                    }
-                  }
-                },
-            required: true
-          },
-          responses: {
-            '200': {
-              description: 'Return a personalized user profile.',
-              content: {
-                  'application/json': {
-                      schema: {
-                    	  $ref: '#/components/schemas/personalize_profile'
-                     }
-                  }
-               }
-            }
-          }
-        }
-      },
-  '/personalize/context': {
+  '/EasyTV_HBMM_Restful_WS/personalize/context': {
   	  post: {
           tags: ['Personalize context'],
           description: 'Presonalize a user profile in relation to a specific context',
@@ -88,7 +82,58 @@ module.exports = {
                   'application/json': {
                     schema: {
                   	  $ref: '#/components/schemas/personalize_context'
-                    }
+                    },
+				    example: {
+				    	"user_id": 1,
+				    	"user_context": {
+				    			"http://registry.easytv.eu/context/location": "gr",
+				    			"http://registry.easytv.eu/context/time": "12:00:00"
+				    		},
+				    	"user_profile": {
+				    		"user_preferences": {"default": {"preferences": {
+				                            "http://registry.easytv.eu/common/volume": 90,
+				                            "http://registry.easytv.eu/common/contrast": 100,
+				                            "http://registry.easytv.eu/application/control/voice": true,
+				                            "http://registry.easytv.eu/application/cs/audio/track": "ca",
+				                            "http://registry.easytv.eu/application/cs/ui/language": "en",
+				                            "http://registry.easytv.eu/application/cs/audio/volume": 33,
+				                            "http://registry.easytv.eu/application/cs/ui/text/size": "20",
+				                            "http://registry.easytv.eu/application/tts/audio/speed": 0,
+				                            "http://registry.easytv.eu/application/tts/audio/voice": "male",
+				                            "http://registry.easytv.eu/application/cs/audio/eq/bass": -4,
+				                            "http://registry.easytv.eu/application/cs/audio/eq/mids": 5,
+				                            "http://registry.easytv.eu/application/tts/audio/volume": 90
+				    				}		
+				    			},
+				    			"conditional": [{
+				    				"name": "Morning subtitles color contrast",
+				    				"preferences": {				 	
+				    					"http://registry.easytv.eu/common/volume": 90,
+				    					"http://registry.easytv.eu/application/cs/cc/subtitles/font/color": "#ffffff"
+				    				},	
+				    				"conditions": [{
+				    					"operands": [
+				    						{
+				    							"operands": [
+				    								"http://registry.easytv.eu/context/time",
+				    								"08:00:00"
+				    							],
+				    							"type": "gt"
+				    						},
+				    						{
+				    							"operands": [
+				    								"http://registry.easytv.eu/context/time",
+				    								"15:00:00"
+				    							],
+				    							"type": "lt"
+				    						}
+				    					],
+				    					"type": "and"
+				    				}]
+				    			}]
+				    		}
+				    	}
+				    }
                   }
                 },
             required: true
@@ -106,8 +151,9 @@ module.exports = {
             }
           }
         }
-     },
-     '/personalize/content': {
+     }
+/*      ,
+     '/EasyTV_HBMM_Restful_WS/personalize/content': {
      	  post: {
              tags: ['Personalize content'],
              description: 'Presonalize a user profile in relation to a specific content',
@@ -134,7 +180,7 @@ module.exports = {
                }
              }
            }
-         }
+         }*/
   },
   components: {
     schemas: {
@@ -256,7 +302,7 @@ module.exports = {
           }
         }
       },
-      personalize_content: {
+      personalize_context: {
           type: 'object',
           properties: {
           	user_id: {
@@ -270,7 +316,7 @@ module.exports = {
             }
           }
        },
-       personalize_context: {
+       personalize_content: {
            type: 'object',
            properties: {
            	user_id: {

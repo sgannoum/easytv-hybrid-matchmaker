@@ -39,7 +39,7 @@ const mappedOpenRoutes = mapRoutes(config.publicRoutes, './REST_Full/');
 //Api handler
 const swaggerUi = require('swagger-ui-express');
 const openApiDocumentation = require('../api-docs/API_description.js');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
+app.use('/EasyTV_HBMM_Restful_WS/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
 //secure express app
 app.use(helmet({

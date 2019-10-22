@@ -31,16 +31,15 @@ const ProfilePersonalization = () => {
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			
-			console.log('user['+user_id+']: ',' personalize profile')
+			console.log('user['+user_id+']: ','personalize profile.')
 
-						 
 			var stmm_options = {
 				    method: 'POST',
 				    uri: urls.STMM_PERSONALIZE_PROFILE,
-				    body: user_profile,
+				    body: req.body,
 				    json: true // Automatically stringifies the body to JSON
 			 };
-			
+						
 			//chained request			 
 			rp(stmm_options)
 			  .then( function (response) {
@@ -50,9 +49,9 @@ const ProfilePersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+']: ',' STMM profile', response)
+					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
 					
-					stmm_profile  = response;
+					stmm_profile  = response.user_profile;
 					stmm_options.uri = urls.RBMM_PERSONALIZE_PROFILE
 					return rp(stmm_options)
 					
@@ -64,10 +63,13 @@ const ProfilePersonalization = () => {
 						return
 					}
 
-					console.log('user['+user_id+']: ',' RBMM profile', response)
+					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
 	
-					rbmm_profile  = response;
+					rbmm_profile  = response.user_profile;
 					var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile)
+					
+					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 

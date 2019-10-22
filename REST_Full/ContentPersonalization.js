@@ -11,8 +11,7 @@ const ContentPersonalization = () => {
 	
   const personalize_content = (req, res) => {	
 	  
-	  
-			// Check for user Id
+	  		// Check for user Id
 			if (!req.body.user_id) { 
 				console.log('A request with missing user_id')
 				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
@@ -34,31 +33,54 @@ const ContentPersonalization = () => {
 			}
 			
 			// Check for user profile
-			if (!req.body.user_content) { 
+			if (!req.body.user_content && !req.body.user_content_url) { 
 				console.log('A request with missing user_content')
 				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
 					  						  msg: msg.missing_user_content.msg_text });
 			}
 			
-			console.log('user['+user_id+']: ',' personalize content')
-	  
-	  
 			var stmm_profile;
 			var rbmm_profile;
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
-			const user_content = req.body.user_content
+			const user_content_url = req.body.user_content_url
+			var user_content
+			
 						 
 			var stmm_options = {
 				    method: 'POST',
 				    uri: urls.STMM_PERSONALIZE_CONTENT,
-				    body: user_profile,
+				    body: {user_id: user_id, user_profile:user_profile},
 				    json: true // Automatically stringifies the body to JSON
 			 };
 			
+			var mpd_options = {
+				    method: 'GET',
+				    uri: user_content_url
+			 };
+			
+			console.log('user['+user_id+']: ',' personalize content')
+
 			//chained request			 
-			rp(stmm_options)
+			rp(mpd_options)
+			 .then( function (response) {
+					
+					if(response == undefined) {
+						res.status(500).json({ msg: 'Internal server error' });
+						return
+					}
+
+					console.log('user['+user_id+']: ',' MPD file get')
+					
+					user_content = response
+					
+					//user_content = hbmmImpl.mp_to_json(response)
+					console.log(response)
+					
+					return rp(stmm_options)
+					
+			  })
 			  .then( function (response) {
 					
 					if(response == undefined) {
@@ -66,9 +88,9 @@ const ContentPersonalization = () => {
 						return
 					}
 
-					console.log('user['+user_id+']: ',' STMM profile', response)
+					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
 					
-					stmm_profile  = response;
+					stmm_profile  = response.user_profile;
 					stmm_options.uri = urls.RBMM_PERSONALIZE_CONTENT
 					return rp(stmm_options)
 					
@@ -80,10 +102,13 @@ const ContentPersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+']: ',' RBMM profile', response)
+					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
+					
+					rbmm_profile  = response.user_profile;
+					var  hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, user_content, stmm_profile, rbmm_profile, user_content)
+					
+					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
 
-					rbmm_profile  = response;
-					var  hybrid_user_profile = hbmmImpl.personalize_context(user_id, user_profile, user_content, stmm_profile, rbmm_profile)
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 
