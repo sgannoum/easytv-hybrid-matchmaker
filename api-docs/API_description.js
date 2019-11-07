@@ -65,7 +65,7 @@ module.exports = {
             content: {
                 'application/json': {
                     schema: {
-                  	  $ref: '#/components/schemas/personalize_profile'
+                  	  $ref: '#/components/schemas/personalize_output'
                    }
                 }
              }
@@ -154,7 +154,7 @@ module.exports = {
               content: {
                   'application/json': {
                       schema: {
-                    	  $ref: '#/components/schemas/personalize_profile'
+                    	  $ref: '#/components/schemas/personalize_output'
                      }
                   }
                }
@@ -192,18 +192,10 @@ module.exports = {
                  content: {
                      'application/json': {
                          schema: {
-                       	  $ref: '#/components/schemas/personalize_content'
+                       	  $ref: '#/components/schemas/personalize_output'
                         },
     				    example: {
     				    	"user_id": 1,
-    				    	"user_context": {
-    				    			"http://registry.easytv.eu/context/location": "gr",
-    				    			"http://registry.easytv.eu/context/time": "12:00:00"
-    				    		},
-    				    	"user_content": {
-    				    			"media": "Com_si_fos_ahir",
-    				    			"episonde": "com_si_fos_ahir_capitol_427"
-    				    	},
     				    	"user_profile": {
     				    		"user_preferences": {"default": {"preferences": {
     				                            "http://registry.easytv.eu/common/volume": 90,
@@ -220,32 +212,17 @@ module.exports = {
     				                            "http://registry.easytv.eu/application/tts/audio/volume": 90
     				    				}		
     				    			},
-    				    			"conditional": [{
-    				    				"name": "Morning subtitles color contrast",
-    				    				"preferences": {				 	
-    				    					"http://registry.easytv.eu/common/volume": 90,
-    				    					"http://registry.easytv.eu/application/cs/cc/subtitles/font/color": "#ffffff"
-    				    				},	
-    				    				"conditions": [{
-    				    					"operands": [
-    				    						{
-    				    							"operands": [
-    				    								"http://registry.easytv.eu/context/time",
-    				    								"08:00:00"
-    				    							],
-    				    							"type": "gt"
-    				    						},
-    				    						{
-    				    							"operands": [
-    				    								"http://registry.easytv.eu/context/time",
-    				    								"15:00:00"
-    				    							],
-    				    							"type": "lt"
-    				    						}
-    				    					],
-    				    					"type": "and"
-    				    				}]
-    				    			}]
+    				    			  "recommendations": {
+    				    	                "preferences": {
+    				    	                    "http://registry.easytv.eu/common/volume": 78,
+    				    	                    "http://registry.easytv.eu/common/contrast": 64,
+    				    	                    "http://registry.easytv.eu/common/content/audio/language": "EN",
+    				    	                    "http://registry.easytv.eu/common/display/screen/enhancement/cursor/color": "#41BA82",
+    				    	                    "http://registry.easytv.eu/application/tts/audio/language": "CA",
+    				    	                    "http://registry.easytv.eu/application/tts/audio/speed": 43,
+    				    	                    "http://registry.easytv.eu/application/tts/audio/volume": 75
+    				    	                }
+    				    			  }
     				    		}
     				    	}
     				    }
@@ -417,41 +394,20 @@ module.exports = {
         		  type: "string",description: "Volume level"
         		 }
           }
-      },
-      default: {
-    	  type: 'object',
-          properties: {
-          preferences: {
-            $ref: '#/components/schemas/preferences'
-          }
-        }
-      },
-      
-      operand:{
-          type: 'string',
-      },
-      operands:{
-          type: "array",
-          items: {
-            $ref: "#/components/schemas/operand"
-          }
-      },
+      }, 
       condition:{
     	  type: 'object',
           properties: {
 	          type: {
 	        	  type: 'string'
 	          },
-	          operands: {
-		        $ref: '#/components/schemas/operands'
-	       }
+	          operands:{
+	              type: "array",
+	              items: {
+	            	  type: 'string',
+	              }
+	          }
         }
-      },
-      conditions:{
-          type: "array",
-          items: {
-            $ref: "#/components/schemas/condition"
-          }
       },
       conditional:{
     	  type: 'object',
@@ -459,9 +415,12 @@ module.exports = {
            name: {
         	   type: 'string'
            },
-           conditions: {
-	        $ref: '#/components/schemas/conditions'
-	       },
+           conditions:{
+               type: "array",
+               items: {
+                 $ref: "#/components/schemas/condition"
+               }
+           },
 	       preferences:{
 	    	   $ref: '#/components/schemas/preferences'
 	       }
@@ -472,17 +431,6 @@ module.exports = {
           items: {
             $ref: "#/components/schemas/conditional"
           }
-      },
-      user_preferences: {
-    	  type: 'object',
-          properties: {
-          default: {
-            $ref: '#/components/schemas/default'
-          },
-          conditional:{
-  		    $ref: '#/components/schemas/conditionals'
-          }
-        }
       },     
       error_message:{
     	  type: 'object',
@@ -498,9 +446,22 @@ module.exports = {
       user_profile: {
           type: 'object',
           properties: {
-        	  user_preferences: {
-              $ref: '#/components/schemas/user_preferences'
-            }
+              user_preferences: {
+            	  type: 'object',
+                  properties: {
+                  default: {
+                	  type: 'object',
+                      properties: {
+                      preferences: {
+                        $ref: '#/components/schemas/preferences'
+                      }
+                    }
+                  },
+                  conditional:{
+          		    $ref: '#/components/schemas/conditionals'
+                  }
+                }
+              }
           }
       },
       personalize_profile: {
@@ -544,7 +505,41 @@ module.exports = {
                  $ref: '#/components/schemas/user_content'
              }
            }
-        }
+        },
+        personalize_output: {
+            type: 'object',
+            properties: {
+            	user_id: {
+                $ref: '#/components/schemas/user_id'
+              },
+              user_profile: {
+                  type: 'object',
+                  properties: {
+                      user_preferences: {
+                    	  type: 'object',
+                          properties: {
+                          default: {
+                        	  type: 'object',
+                              properties: {
+                              preferences: {
+                                $ref: '#/components/schemas/preferences'
+                              }
+                            }
+                          },
+                          recommendations:{
+                        	  type: 'object',
+                              properties: {
+                              preferences: {
+                                $ref: '#/components/schemas/preferences'
+                              }
+                            }
+                          }
+                        }
+                      }
+                  }
+              }
+            }
+         }
     }
   }
 };
