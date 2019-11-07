@@ -64,8 +64,9 @@ const ContextPersonalization = () => {
 					
 					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
 					
+					//set rbmm profile
 					rbmm_profile  = response.user_profile;
-					rbmm_options.uri = urls.STMM_PERSONALIZE_PROFILE
+					
 					return rp(stmm_options)
 			  })
 			  .then( function (response) {
@@ -77,8 +78,10 @@ const ContextPersonalization = () => {
 	
 					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
 	
+					//set stmm profile
 					stmm_profile  = response.user_profile;
-					var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile, user_context)
+					
+					var  hybrid_user_profile = hbmmImpl.personalize_context(user_id, user_profile, stmm_profile, rbmm_profile, user_context)
 					
 					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
 					

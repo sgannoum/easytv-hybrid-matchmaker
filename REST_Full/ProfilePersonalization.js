@@ -6,6 +6,8 @@ var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js')
 
+console.log()
+console.log()
 console.log("Connect to stmm on Url: "+ urls.STMM_URL)
 console.log("Connect to rbmm on Url: "+ urls.RBMM_URL)
 
@@ -58,8 +60,9 @@ const ProfilePersonalization = () => {
 					
 					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
 					
+					//set rbmm profile
 					rbmm_profile  = response.user_profile;
-					rbmm_options.uri = urls.STMM_PERSONALIZE_PROFILE
+					
 					return rp(stmm_options)
 			  })
 			  .then( function (response) {
@@ -71,7 +74,10 @@ const ProfilePersonalization = () => {
 
 					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
 	
+					//set stmm profile
 					stmm_profile  = response.user_profile;
+					
+					//personalize profile
 					var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile)
 					
 					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
@@ -79,8 +85,8 @@ const ProfilePersonalization = () => {
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 
-				  console.log('user['+user_id+'][Error]: ', err.response.body)
-				  res.status(err.statusCode).json(err.response.body);
+				  console.log('user['+user_id+'][Error]: ', err)
+				  res.status(err.statusCode).json(err);
 			  }) 
 	};
 	

@@ -47,8 +47,8 @@ const ContentPersonalization = () => {
 			}
 			
 			// Check for user profile
-			if (!req.body.user_content.episonde) { 
-				console.log('Personalize content requestt: missing episonde element from user_content.')
+			if (!req.body.user_content.episode) { 
+				console.log('Personalize content requestt: missing episode element from user_content.')
 				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
 					  						  msg: msg.missing_user_content.msg_text });
 			}
@@ -72,13 +72,13 @@ const ContentPersonalization = () => {
 			var rbmm_options = {
 				    method: 'POST',
 				    uri: urls.RBMM_PERSONALIZE_CONTENT,
-				    body: {user_id: user_id, user_profile:user_profile, user_context: user_context, user_content: undefined},
+				    body: req.body,
 				    json: true // Automatically stringifies the body to JSON
 			 };
 			
 			var accessibility_options = {
 				    method: 'GET',
-				    uri: urls.ACCESSIBILITY_CONTENT+'/'+user_content.media+'/'+user_content.episonde,
+				    uri: urls.ACCESSIBILITY_CONTENT+'/'+user_content.media+'/'+user_content.episode,
 				    json: true // Automatically stringifies the body to JSON
 			 };
 			
@@ -137,11 +137,12 @@ const ContentPersonalization = () => {
 					//process content to be used for 
 					user_content = hbmmImpl.get_user_content(user_content, mpd_file)
 					
-					console.log('user['+user_id+'][MPD]:','send request for stmm with content', JSON.stringify(user_content))
-
-					//set stmm request user_content 
+					//add user_content to requests 
+					rbmm_options.body.user_content = user_content
 					stmm_options.body.user_content = user_content
 						
+					console.log('user['+user_id+'][MPD]:','send request for rbmm with content', JSON.stringify(stmm_options.body))
+
 					return rp(rbmm_options)
 					
 			  })
@@ -154,8 +155,9 @@ const ContentPersonalization = () => {
 						
 						console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
 						
+						//set rbmm profile
 						rbmm_profile  = response.user_profile;
-						rbmm_options.uri = urls.STMM_PERSONALIZE_PROFILE
+						
 						return rp(stmm_options)
 				  })
 				  .then( function (response) {
@@ -167,8 +169,11 @@ const ContentPersonalization = () => {
 		
 						console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
 		
+						//set stmm profile
 						stmm_profile  = response.user_profile;
-						var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
+						
+						//personalize content
+						var  hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
 						
 						console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
 						
