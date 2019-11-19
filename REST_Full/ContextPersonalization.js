@@ -37,7 +37,7 @@ const ContextPersonalization = () => {
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
 			
-			console.log('user['+user_id+']: ',' personalize context')
+			console.log('user['+user_id+']: ',' personalize context' , JSON.stringify(req.body))
 
 			var stmm_options = {
 			    method: 'POST',

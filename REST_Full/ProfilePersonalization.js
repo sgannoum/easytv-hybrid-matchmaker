@@ -33,7 +33,7 @@ const ProfilePersonalization = () => {
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			
-			console.log('user['+user_id+']: ','personalize profile.')
+			console.log('user['+user_id+']: ','personalize profile.', JSON.stringify(req.body))
 
 			var stmm_options = {
 				    method: 'POST',

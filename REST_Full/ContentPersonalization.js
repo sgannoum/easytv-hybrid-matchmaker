@@ -86,7 +86,7 @@ const ContentPersonalization = () => {
 				    method: 'GET'
 			 };
 			
-			console.log('user['+user_id+']:','personalize content')
+			console.log('user['+user_id+']:','personalize content ', JSON.stringify(req.body))
 			console.log('user['+user_id+']:','send request for content accessibility services', accessibility_options.uri)
 
 			//chained request			 
