@@ -60,7 +60,6 @@ const ContentPersonalization = () => {
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
 			var user_content = req.body.user_content
-			var mpd_file
 						 
 			var stmm_options = {
 				    method: 'POST',
@@ -118,7 +117,7 @@ const ContentPersonalization = () => {
 					mpd_options.uri = user_content.mpd_url.replace('//media','/media')
 					
 					console.log('user['+user_id+'][content_services]: ', JSON.stringify(response))
-					console.log('user['+user_id+'][content_services]:','send request for MPD file', mpd_options.uri)
+					console.log('user['+user_id+'][content_services]:','send request for MPD file at', mpd_options.uri)
 
 					return rp(mpd_options)
 
@@ -132,57 +131,65 @@ const ContentPersonalization = () => {
 
 					console.log('user['+user_id+'][MPD]:', response)
 					
-					mpd_file  = response;
+					var mpd_file_content  = response
 					
-					//process content to be used for 
-					user_content = hbmmImpl.get_user_content(user_content, mpd_file)
+					try{
+						//process content to be used for and print any error that occurs
+						user_content = hbmmImpl.get_user_content(user_content, mpd_file_content)
+					} catch( err ){
+						console.log(err)
+					}
 					
-					//add user_content to requests 
+					console.log('user['+user_id+'][MPD]:','extracted user_context ', JSON.stringify(user_content))
+					
+					//replace user_content to in both requests 
 					rbmm_options.body.user_content = user_content
 					stmm_options.body.user_content = user_content
 						
-					console.log('user['+user_id+'][MPD]:','send request for rbmm with content', JSON.stringify(stmm_options.body))
+					console.log('user['+user_id+'][MPD]:','send request to rbmm at ', rbmm_options.uri)
 
 					return rp(rbmm_options)
 					
 			  })
-			  	.then( function (response) {
-						
-						if(response == undefined) {
-							res.status(400).json({ msg: 'Internal server error' });
-							return
-						}
-						
-						console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
-						
-						//set rbmm profile
-						rbmm_profile  = response.user_profile;
-						
-						return rp(stmm_options)
-				  })
-				  .then( function (response) {
-						
-						if(response == undefined) {
-							res.status(400).json({ msg: 'Internal server error' });
-							return
-						}
-		
-						console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
-		
-						//set stmm profile
-						stmm_profile  = response.user_profile;
-						
-						//personalize content
-						var  hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
-						
-						console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
-						
-						return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
-				  })
-				  .catch(function (err) { 
-					  console.log('user['+user_id+'][Error]: ', err.response.body)
-					  res.status(err.statusCode).json(err.response.body);
-				  }) 
+		  	  .then( function (response) {
+					
+					if(response == undefined) {
+						res.status(400).json({ msg: 'Internal server error' });
+						return
+					}
+					
+					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
+					
+					//set rbmm profile
+					rbmm_profile  = response.user_profile;
+					
+					console.log('user['+user_id+'][RBMM]:','send request to stmm at ', stmm_options.uri)
+					
+					return rp(stmm_options)
+			  })
+			  .then( function (response) {
+					
+					if(response == undefined) {
+						res.status(400).json({ msg: 'Internal server error' });
+						return
+					}
+	
+					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
+	
+					//set stmm profile
+					stmm_profile  = response.user_profile;
+					
+					//personalize content
+					var hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
+					
+					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+					
+					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
+			  })
+			  .catch(function (err) { 
+				  console.log('user['+user_id+'][Error]: ', err.response.body)
+				  res.status(err.statusCode).json(err.response.body);
+			  }) 
 	};
 	
 	/**
