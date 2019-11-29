@@ -15,12 +15,12 @@ services:
       DB_PORT: "3306"
       DB_NAME: "easytv"
       DB_USER: "easytv"
-      DB_PASSWORD: "/run/secrets/hpapidbroot_password"
+      DB_PASSWORD_FILE: "/run/secrets/hpapidb_pass"
     stdin_open: true
     tty: true
     secrets:
+      - hpapidb_pass
       - hpapidbroot_password
-    
       
   stmm_rt:
     image: stmm_rt:v1
@@ -48,15 +48,18 @@ services:
       RBMM_HOST: "rbmm"
       STMM_PORT: "8077"
       RBMM_PORT: "8080"
-      PORT: "8087 "
+      PORT: "8087"
+      http_proxy: "http://161.27.206.250:8080"
+      https_proxy: "http://161.27.206.250:8080"
+      no_proxy: ".easytv.eng.it, rbmm, stmm_rt" 
     ports:
       - "8087:8087"
 
-
 secrets:
+  hpapidb_pass:
+    external: true
   hpapidbroot_password:
     external: true
-
 
 networks:
   easytv_net:
