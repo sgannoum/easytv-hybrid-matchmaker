@@ -6,6 +6,7 @@ var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js')
 
+const endpoint_tag = 'PCnt';
 
 const ContentPersonalization = () => {
 	
@@ -13,44 +14,44 @@ const ContentPersonalization = () => {
 	  
 	  		// Check for user Id
 			if (!req.body.user_id) { 
-				console.log('Personalize content requestt: missing user_id')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
 				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
 										      msg: msg.missing_user_id.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.log('Personalize content requestt: missing user_profile')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_context) { 
-				console.log('Personalize content requestt: missing user_context')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
 				return res.status(500).json({ code: msg.missing_user_context.msg_code, 
 					  						  msg: msg.missing_user_context.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content) { 
-				console.log('Personalize content requestt: missing user_content')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
 				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
 					  						  msg: msg.missing_user_content.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content.media) { 
-				console.log('Personalize content requestt: missing media element from user_content.')
-				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
-					  						  msg: msg.missing_user_content.msg_text });
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content_media.msg_text)
+				return res.status(500).json({ code: msg.missing_user_content_media.msg_code, 
+					  						  msg: msg.missing_user_content_media.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content.episode) { 
-				console.log('Personalize content requestt: missing episode element from user_content.')
-				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
-					  						  msg: msg.missing_user_content.msg_text });
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content_episode.msg_text)
+				return res.status(500).json({ code: msg.missing_user_content_episode.msg_code, 
+					  						  msg: msg.missing_user_content_episode.msg_text });
 			}
 			
 			
@@ -85,10 +86,9 @@ const ContentPersonalization = () => {
 				    method: 'GET'
 			 };
 			
-			console.log('user['+user_id+']:','personalize content ', JSON.stringify(req.body))
-			console.log('user['+user_id+']:','send request for content accessibility services', accessibility_options.uri)
+			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
 
-			//chained request			 
+			//chained request to content services		 
 			rp(accessibility_options)
 			 .then( function (response) {
 					
@@ -97,18 +97,18 @@ const ContentPersonalization = () => {
 						return
 					}
 					
-					// Check for user profile
+					// Check for services section
 					if (!response.services) { 
-						console.log('user['+user_id+']', 'Content response: missing services element', JSON.stringify(response))
-						return res.status(500).json({ code: msg.missing_user_content.msg_code, 
-							  						  msg: msg.missing_user_content.msg_text });
+						console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_accessibility_services.msg_text )
+						return res.status(500).json({ code: msg.missing_accessibility_services.msg_code, 
+							  						  msg: msg.missing_accessibility_services.msg_text });
 					}
 
 					// Check for user profile
 					if (!response.mpd_url) { 
-						console.log('user['+user_id+']', 'Content response: missing mpd_url element', JSON.stringify(response))
-						return res.status(500).json({ code: msg.missing_user_content.msg_code, 
-							  						  msg: msg.missing_user_content.msg_text });
+						console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_mpd_url.msg_text )
+						return res.status(500).json({ code: msg.missing_mpd_url.msg_code, 
+							  						  msg: msg.missing_mpd_url.msg_text });
 					}
 					
 					user_content = response
@@ -116,12 +116,20 @@ const ContentPersonalization = () => {
 					//user_content = hbmmImpl.mp_to_json(response)
 					mpd_options.uri = user_content.mpd_url.replace('//media','/media')
 					
-					console.log('user['+user_id+'][content_services]: ', JSON.stringify(response))
-					console.log('user['+user_id+'][content_services]:','send request for MPD file at', mpd_options.uri)
+					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, JSON.stringify(response))
 
 					return rp(mpd_options)
 
 			  })
+			  .catch(function (err) {
+				  if(!res.finished) {
+					  //console.log('[INFO][%s][%d][accessibility services]: %s', endpoint_tag, user_id, accessibility_options.uri)
+					  console.error('[ERROR][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
+			  }) 
+			
+			//chained request to get MPD		 
 			  .then( function (response) {
 					
 					if(response == undefined) {
@@ -129,28 +137,30 @@ const ContentPersonalization = () => {
 						return
 					}
 
-					console.log('user['+user_id+'][MPD]:', response)
-					
+					console.log('[INFO][%s][%d][MPD]: %s', endpoint_tag, user_id, response)
+
 					var mpd_file_content  = response
 					
-					try{
-						//process content to be used for and print any error that occurs
-						user_content = hbmmImpl.get_user_content(user_content, mpd_file_content)
-					} catch( err ){
-						console.log(err)
-					}
+					//process content to be used for and print any error that occurs
+					user_content = hbmmImpl.get_user_content(user_content, mpd_file_content)
 					
-					console.log('user['+user_id+'][MPD]:','extracted user_context ', JSON.stringify(user_content))
+					//console.log('[INFO][%s][%d][MPD]: %s', endpoint_tag, user_id, JSON.stringify(user_content))
 					
-					//replace user_content to in both requests 
+					//replace user_content  
 					rbmm_options.body.user_content = user_content
 					stmm_options.body.user_content = user_content
 						
-					console.log('user['+user_id+'][MPD]:','send request to rbmm at ', rbmm_options.uri)
-
 					return rp(rbmm_options)
 					
 			  })
+			  .catch(function (err) { 
+				  if(!res.finished) {
+					  console.error('[ERROR][%s][%d][MPD]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
+			  }) 
+			
+			//chained request to RBMM		 
 		  	  .then( function (response) {
 					
 					if(response == undefined) {
@@ -158,15 +168,21 @@ const ContentPersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][RBMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 					
 					//set rbmm profile
 					rbmm_profile  = response.user_profile;
-					
-					console.log('user['+user_id+'][RBMM]:','send request to stmm at ', stmm_options.uri)
-					
+										
 					return rp(stmm_options)
 			  })
+			  .catch(function (err) { 
+				  if(!res.finished) {
+					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id , err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
+			  }) 
+			
+			//chained request to STMM		 
 			  .then( function (response) {
 					
 					if(response == undefined) {
@@ -174,7 +190,7 @@ const ContentPersonalization = () => {
 						return
 					}
 	
-					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][STMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 	
 					//set stmm profile
 					stmm_profile  = response.user_profile;
@@ -182,13 +198,15 @@ const ContentPersonalization = () => {
 					//personalize content
 					var hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
 					
-					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
 					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 
-				  console.log('user['+user_id+'][Error]: ', err.response.body)
-				  res.status(err.statusCode).json(err.response.body);
+				  if(!res.finished) {
+					  console.error('[ERROR][%s][%d][STMM]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
 			  }) 
 	};
 	
@@ -209,7 +227,7 @@ const ContentPersonalization = () => {
     		"									\"user_content\": user content content," +
     		"								}"});
       } catch (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ msg: 'Internal server error' });
       }
 	

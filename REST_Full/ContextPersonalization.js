@@ -6,27 +6,28 @@ var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js')
 
+const endpoint_tag = 'PCxt';
 
 const ContextPersonalization = () => {
   const personalize_context = (req, res) => {	
-			
+		 
 			// Check for user Id
 			if (!req.body.user_id) { 
-				console.log('Personalize context requestt:  missing user_id')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
 				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
 										      msg: msg.missing_user_id.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.log('Personalize context requestt: missing user_profile')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_context) { 
-				console.log('Personalize context requestt: missing user_context')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
 				return res.status(500).json({ code: msg.missing_user_context.msg_code, 
 					  						  msg: msg.missing_user_context.msg_text });
 			}
@@ -37,7 +38,7 @@ const ContextPersonalization = () => {
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
 			
-			console.log('user['+user_id+']: ',' personalize context' , JSON.stringify(req.body))
+			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
 
 			var stmm_options = {
 			    method: 'POST',
@@ -53,7 +54,7 @@ const ContextPersonalization = () => {
 			    json: true // Automatically stringifies the body to JSON
 			};
 					
-			//chained request			 
+			//chained request to rbmm			 
 			rp(rbmm_options)
 			  .then( function (response) {
 					
@@ -62,13 +63,21 @@ const ContextPersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][RBMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 					
 					//set rbmm profile
 					rbmm_profile  = response.user_profile;
 					
 					return rp(stmm_options)
 			  })
+			  .catch(function (err) { 
+				  if(!res.finished) {
+					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
+			  }) 
+			
+			//chained request to stmm			 
 			  .then( function (response) {
 					
 					if(response == undefined) {
@@ -76,20 +85,22 @@ const ContextPersonalization = () => {
 						return
 					}
 	
-					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][STMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 	
 					//set stmm profile
 					stmm_profile  = response.user_profile;
 					
 					var  hybrid_user_profile = hbmmImpl.personalize_context(user_id, user_profile, stmm_profile, rbmm_profile, user_context)
 					
-					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
 					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
-			  .catch(function (err) { 
-				  console.log('user['+user_id+'][Error]: ', err.response.body)
-				  res.status(err.statusCode).json(err.response.body);
+			  .catch(function (err) {
+				  if(!res.finished) {
+					  console.error('[ERROR][%s][%d][STMM]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }	  
 			  }) 
 
 	};
@@ -111,7 +122,7 @@ const ContextPersonalization = () => {
     		"									\"user_context\": user context json," +
     		"								}"});
       } catch (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ msg: 'Internal server error' });
       }
 	

@@ -8,22 +8,24 @@ var msg = require('./Messages.js')
 
 console.log()
 console.log()
-console.log("Connect to stmm on Url: "+ urls.STMM_URL)
-console.log("Connect to rbmm on Url: "+ urls.RBMM_URL)
+console.log("[INFO]:%s %s", "Connect to stmm on Url", urls.STMM_URL)
+console.log("[INFO]:%s %s", "Connect to rbmm on Url", urls.RBMM_URL)
+
+const endpoint_tag = 'PF';
 
 const ProfilePersonalization = () => {
   const personalize_profile = (req, res) => {	
-	  
+	  	
 			// Check for user Id
 			if (!req.body.user_id) { 
-				console.log('Personalize profile requestt: missing user_id')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
 				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
 										      msg: msg.missing_user_id.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.log('Personalize profile requestt: missing user_profile')
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
@@ -33,7 +35,7 @@ const ProfilePersonalization = () => {
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			
-			console.log('user['+user_id+']: ','personalize profile.', JSON.stringify(req.body))
+			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
 
 			var stmm_options = {
 				    method: 'POST',
@@ -49,7 +51,7 @@ const ProfilePersonalization = () => {
 				    json: true // Automatically stringifies the body to JSON
 			 };
 						
-			//chained request			 
+			//chained request to rbmm			 
 			rp(rbmm_options)
 			  .then( function (response) {
 					
@@ -58,13 +60,21 @@ const ProfilePersonalization = () => {
 						return
 					}
 					
-					console.log('user['+user_id+'][RBMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][RBMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 					
 					//set rbmm profile
 					rbmm_profile  = response.user_profile;
 					
 					return rp(stmm_options)
 			  })
+			  .catch(function (err) { 
+				  if(!res.finished){
+					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id, err)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
+			  }) 
+			
+			//chained request to stmm	
 			  .then( function (response) {
 					
 					if(response == undefined) {
@@ -72,7 +82,7 @@ const ProfilePersonalization = () => {
 						return
 					}
 
-					console.log('user['+user_id+'][STMM]:', JSON.stringify(response.user_profile))
+					console.log('[INFO][%s][%d][STMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 	
 					//set stmm profile
 					stmm_profile  = response.user_profile;
@@ -80,13 +90,16 @@ const ProfilePersonalization = () => {
 					//personalize profile
 					var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile)
 					
-					console.log('user['+user_id+'][HBMM]:', JSON.stringify(hybrid_user_profile))
+					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
 					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
 			  .catch(function (err) { 
-				  console.log('user['+user_id+'][Error]: ', err)
-				  res.status(err.statusCode).json(err);
+				  if(!res.finished){
+					  console.error('[ERROR][%s][%d][STMM]: %s', endpoint_tag, user_id, err)
+					  console.error(res)
+					  res.status(500).json({msg: 'Internal server error'});
+				  }
 			  }) 
 	};
 	
