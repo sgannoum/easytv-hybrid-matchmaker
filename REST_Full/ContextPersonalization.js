@@ -73,7 +73,11 @@ const ContextPersonalization = () => {
 			  .catch(function (err) { 
 				  if(!res.finished) {
 					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id, err)
-					  res.status(500).json({msg: 'Internal server error'});
+
+					  if(err.error.code == 'ECONNREFUSED')	  
+						  res.status(500).json({msg: 'Internal server error'});
+					  else 
+						  res.status(500).json(err.error);
 				  }
 			  }) 
 			

@@ -123,9 +123,12 @@ const ContentPersonalization = () => {
 			  })
 			  .catch(function (err) {
 				  if(!res.finished) {
-					  //console.log('[INFO][%s][%d][accessibility services]: %s', endpoint_tag, user_id, accessibility_options.uri)
-					  console.error('[ERROR][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, err)
-					  res.status(500).json({msg: 'Internal server error'});
+					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id, err)
+
+					  if(err.error.code == 'ECONNREFUSED')	  
+						  res.status(500).json({msg: 'Internal server error'});
+					  else 
+						  res.status(500).json(err.error);
 				  }
 			  }) 
 			
