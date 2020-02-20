@@ -18,6 +18,9 @@ const RBMM_PERSONALIZE_CONTEXT = RBMM_URL + "/personalize/context";
 const STMM_PERSONALIZE_CONTENT = STMM_URL + "/personalize/content";
 const RBMM_PERSONALIZE_CONTENT = RBMM_URL + "/personalize/content";
 
+const RBMM_RULES = RBMM_URL + "/personalize/rules";
+const STMM_PROFILES = STMM_URL + "/analysis/clusters";
+
 module.exports.STMM_URL = STMM_URL
 module.exports.RBMM_URL = RBMM_URL
 
@@ -30,6 +33,8 @@ module.exports.RBMM_PERSONALIZE_CONTEXT = RBMM_PERSONALIZE_CONTEXT
 module.exports.STMM_PERSONALIZE_CONTENT = STMM_PERSONALIZE_CONTENT
 module.exports.RBMM_PERSONALIZE_CONTENT = RBMM_PERSONALIZE_CONTENT
 
+module.exports.RBMM_RULES = RBMM_RULES
+module.exports.STMM_PROFILES = STMM_PROFILES
 
 //UPM accessibility API
 const ACCESSBILITY_HOST = process.env.ACCESSBILITY_HOST || '138.4.47.33';

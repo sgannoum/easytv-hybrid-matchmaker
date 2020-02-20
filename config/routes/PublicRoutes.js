@@ -13,7 +13,13 @@ const publicRoutes = {
   'POST /personalize/context': 'ContextPersonalization.personalize_context',
   
   'POST /personalize/content': 'ContentPersonalization.personalize_content',
-  'GET  /personalize/content': 'ContentPersonalization.get_information'
+  'GET  /personalize/content': 'ContentPersonalization.get_information',
+  
+  'POST /personalize/rules': 'HiddenEndPoints.post_Rbmm_Rules',
+  'GET  /personalize/rules': 'HiddenEndPoints.get_Rbmm_Rules',
+  
+  'POST /analysis/clusters': 'HiddenEndPoints.post_stmm_profiles',
+  'GET  /analysis/clusters': 'HiddenEndPoints.get_stmm_profiles'
 
 };
 
