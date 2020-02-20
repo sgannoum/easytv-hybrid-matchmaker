@@ -71,14 +71,14 @@ const HiddenEndPoints = () => {
   const get_stmm_profiles = (req, res) => {	  
 		console.log('[INFO][%s][STMM]: get rules request from url %s', endpoint_tag, urls.STMM_PROFILES)
 
-		var rbmm_options = {
+		var stmm_options = {
 			    method: 'GET',
 			    uri: urls.STMM_PROFILES,
 			    json: true // Automatically stringifies the body to JSON
 		};
 		
 		//set request to rbmm			 
-		rp(rbmm_options)
+		rp(stmm_options)
 		  .then( function (response) {
 				
 				if(response == undefined) {
@@ -98,7 +98,7 @@ const HiddenEndPoints = () => {
   const post_stmm_profiles = (req, res) => {
 		console.log('[INFO][%s][STMM]: post rules request to url %s', endpoint_tag, urls.STMM_PROFILES)
 		  
-		var rbmm_options = {
+		var stmm_options = {
 			    method: 'POST',
 			    uri: urls.STMM_PROFILES,
 			    body: req.body,
@@ -106,7 +106,7 @@ const HiddenEndPoints = () => {
 		};
 		
 		//set request to rbmm			 
-		rp(rbmm_options)
+		rp(stmm_options)
 		  .then( function (response) {
 				
 				if(response == undefined) {
