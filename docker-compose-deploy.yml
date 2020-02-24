@@ -10,7 +10,9 @@ services:
       - stmm_rt
     environment:
       STMM_HOST: "stmm_rt"
+      RBMM_HOST: "rbmm"
       STMM_PORT: "8077"
+      RBMM_PORT: "8080"
       DB_HOST: "personalization_db"
       DB_PORT: "3306"
       DB_NAME: "easytv"
