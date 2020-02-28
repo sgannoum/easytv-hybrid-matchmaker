@@ -64,7 +64,7 @@ const ContentPersonalization = () => {
 						 
 			var stmm_options = {
 				    method: 'POST',
-				    uri: urls.STMM_PERSONALIZE_PROFILE,
+				    uri: urls.STMM_PERSONALIZE_CONTENT,
 				    body: req.body,
 				    json: true // Automatically stringifies the body to JSON
 			};
