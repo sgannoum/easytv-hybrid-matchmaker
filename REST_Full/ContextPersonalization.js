@@ -34,6 +34,7 @@ const ContextPersonalization = () => {
 
 			var stmm_profile;
 			var rbmm_profile;
+			const radius = '?radius=' + (req.query.radius || '0.3') 
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
@@ -42,7 +43,7 @@ const ContextPersonalization = () => {
 
 			var stmm_options = {
 			    method: 'POST',
-			    uri: urls.STMM_PERSONALIZE_CONTEXT,
+			    uri: urls.STMM_PERSONALIZE_PROFILE + radius,
 			    body: req.body,
 			    json: true // Automatically stringifies the body to JSON
 			};

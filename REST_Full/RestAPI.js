@@ -34,7 +34,8 @@ const environment = process.env.NODE_ENV || 'development';
 const app = express();
 const server = http.Server(app);
 const config = require('../config');
-const mappedOpenRoutes = mapRoutes(config.publicRoutes, './REST_Full/');
+const path = process.cwd().endsWith('REST_Full') ? './' : './REST_Full/' 
+const mappedOpenRoutes = mapRoutes(config.publicRoutes, path);
 
 //Api handler
 const swaggerUi = require('swagger-ui-express');
