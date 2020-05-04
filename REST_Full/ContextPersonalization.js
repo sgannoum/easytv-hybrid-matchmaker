@@ -5,6 +5,7 @@ var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
 var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js')
+var DataBaseHandler = require('../lib/DataBaseHandler.js')
 
 const endpoint_tag = 'PCxt';
 
@@ -98,6 +99,9 @@ const ContextPersonalization = () => {
 					var  hybrid_user_profile = hbmmImpl.personalize_context(user_id, user_profile, stmm_profile, rbmm_profile, user_context)
 					
 					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
+					
+					//write the user current context
+					DataBaseHandler.write_context_to_db(user_id, user_context)
 					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })

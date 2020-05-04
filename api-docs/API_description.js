@@ -10,8 +10,7 @@ module.exports =
     title: 'EasyTV Personalization API',
     description: 'Description of EasyTV Personalization API'
   },
-  servers: [
-  {
+  servers: [{
       url: service_url,
       description: 'Production server'
   }],
@@ -24,75 +23,78 @@ module.exports =
     },
     {
       name: 'Personalize content'
+    },
+    {
+      name: 'Interaction events'
     }
   ],
    paths: {
     '/EasyTV_HBMM_Restful_WS/personalize/profile': {
-    post: {
-        tags: ['Personalize profile'],
-        description: 'Presonalize a user profile.',
-        parameters:[
-          {
-            in: 'query',
-            name: 'radius',
-            schema: {
-              type: 'number',
-              maximum: 1.0
-            }
-          }],
-        requestBody: {
-            content: {
-                'application/json': {
-                  schema: {
-                    $ref: '#/components/schemas/personalize_profile'
-                  },
-                  example: {
-                        "user_id": 1,
-                      "user_profile": {
-                        "user_preferences": {
-                          "default": {"preferences": {
-                                            "http://registry.easytv.eu/common/volume": 90,
-                                            "http://registry.easytv.eu/common/contrast": 100,
-                                            "http://registry.easytv.eu/application/control/voice": true,
-                                            "http://registry.easytv.eu/application/cs/audio/track": "ca",
-                                            "http://registry.easytv.eu/application/cs/ui/language": "en",
-                                            "http://registry.easytv.eu/application/cs/audio/volume": 33,
-                                            "http://registry.easytv.eu/application/cs/ui/text/size": "20",
-                                            "http://registry.easytv.eu/application/tts/audio/speed": 0,
-                                            "http://registry.easytv.eu/application/tts/audio/voice": "male",
-                                            "http://registry.easytv.eu/application/tts/audio/volume": 90
-                          }}
-                        }
-                      }
-                    
-                    }
-                }
-              },
-          required: true
-        },
-        responses: {
-          '200': {
-            description: 'Return a personalized user profile.',
-            content: {
-                'application/json': {
-                    schema: {
-                      $ref: '#/components/schemas/personalize_output'
-                   }
-                }
-             }
-          },
-          '400': {
-              description: 'Error messages',
-              content: {
-                  'application/json': {
-                      schema: {
-                        $ref: '#/components/schemas/error_message'
-                     }
-                  }
-               }
-            }
-        }
-      }
+	    post: {
+	        tags: ['Personalize profile'],
+	        description: 'Presonalize a user profile.',
+	        parameters:[
+	          {
+	            in: 'query',
+	            name: 'radius',
+	            schema: {
+	              type: 'number',
+	              maximum: 1.0
+	            }
+	          }],
+	        requestBody: {
+	            content: {
+	                'application/json': {
+	                  schema: {
+	                    $ref: '#/components/schemas/personalize_profile'
+	                  },
+	                  example: {
+	                        "user_id": 1,
+	                      "user_profile": {
+	                        "user_preferences": {
+	                          "default": {"preferences": {
+	                                            "http://registry.easytv.eu/common/volume": 90,
+	                                            "http://registry.easytv.eu/common/contrast": 100,
+	                                            "http://registry.easytv.eu/application/control/voice": true,
+	                                            "http://registry.easytv.eu/application/cs/audio/track": "ca",
+	                                            "http://registry.easytv.eu/application/cs/ui/language": "en",
+	                                            "http://registry.easytv.eu/application/cs/audio/volume": 33,
+	                                            "http://registry.easytv.eu/application/cs/ui/text/size": "20",
+	                                            "http://registry.easytv.eu/application/tts/audio/speed": 0,
+	                                            "http://registry.easytv.eu/application/tts/audio/voice": "male",
+	                                            "http://registry.easytv.eu/application/tts/audio/volume": 90
+	                          }}
+	                        }
+	                      }
+	                    
+	                    }
+	                }
+	              },
+	          required: true
+	        },
+	        responses: {
+	          '200': {
+	            description: 'Return a personalized user profile.',
+	            content: {
+	                'application/json': {
+	                    schema: {
+	                      $ref: '#/components/schemas/personalize_output'
+	                   }
+	                }
+	             }
+	          },
+	          '400': {
+	              description: 'Error messages',
+	              content: {
+	                  'application/json': {
+	                      schema: {
+	                        $ref: '#/components/schemas/error_message'
+	                     }
+	                  }
+	               }
+	            }
+	        }
+	      }
     },
   '/EasyTV_HBMM_Restful_WS/personalize/context': {
       post: {
@@ -190,7 +192,7 @@ module.exports =
           }
         }
      },
-     '/EasyTV_HBMM_Restful_WS/personalize/content': {
+  '/EasyTV_HBMM_Restful_WS/personalize/content': {
          post: {
              tags: ['Personalize content'],
              description: 'Presonalize a user profile in relation to a specific content',
@@ -266,7 +268,54 @@ module.exports =
                }
              }
            }
-         }
+         },
+  '/EasyTV_HBMM_Restful_WS/interaction/events':{
+    post: {
+        tags: ['Interaction events'],
+        description: 'Presonalize a user profile.',
+        requestBody: {
+            content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/Interaction_events'
+                  },
+                  example: {
+                      "user_id": 1,
+                      "interaction_events": [
+                          {
+                              "user_context": {
+                                  "http://registry.easytv.eu/context/light": "hallway",
+                                  "http://registry.easytv.eu/context/location": "es",
+                                  "http://registry.easytv.eu/context/proximity": 99,
+                                  "http://registry.easytv.eu/context/time": "08:16:48",
+                                  "http://registry.easytv.eu/context/device/screenSize/width": 720,
+                                  "http://registry.easytv.eu/context/device/screenSize/height": 1344,
+                                  "http://registry.easytv.eu/context/device/screenSize/diameter": 5.5,
+                                  "http://registry.easytv.eu/context/device/screenSize/densityValue": 2,
+                                  "http://registry.easytv.eu/context/device/screenSize/densityBucket": "xhdpi"
+                              },
+                              "preferences": {
+                                  "http://registry.easytv.eu/common/volume": 5,
+                                  "http://registry.easytv.eu/application/cs/ui/text/size": "20"
+                              }
+                          }
+                      ]
+                  }
+                }
+              },
+          required: true
+        },
+        responses: {
+          '200': {
+            description: 'Return Ok.',
+          },
+          '500': {
+              description: 'Error messages',
+            }
+        }
+      }
+    }
+    
   },
   components: {
     schemas: {
@@ -280,22 +329,54 @@ module.exports =
            "http://registry.easytv.eu/context/device": {
              type: "string",
              description: 'Device type, one of mobile, tablet or PC' 
-          },
+            },
             "http://registry.easytv.eu/context/light":{
                type: "string",
-             description: 'The ambient light level (illumination) in lx' 
-           },
+             description: 'The ambient light (dark, dark surroundings, living room, hallway, overcast day, home, class, workplace, sunrise, grocery, supermarket, theater, detailed work, visual task, demanding visual task, full daylight, direct sun)' 
+            },
            "http://registry.easytv.eu/context/proximity":{
               type: "string",
              description: 'Measures the proximity of an object in cm relative to the view screen of a device' 
-           },
+            },
            "http://registry.easytv.eu/context/location":{
              type: "string",
              description: 'The location as country code' 
-          },
+           },
            "http://registry.easytv.eu/context/time":{
              type: "string",
              description: 'Current time in HH:MM:SS form' 
+           },
+          "http://registry.easytv.eu/context/device/screenSize/width":{
+             type: "number",
+             description: 'Device screen width in pixels' 
+           },
+          "http://registry.easytv.eu/context/device/screenSize/height":{
+             type: "number",
+             description: 'Device screen height in pixels' 
+           },
+           "http://registry.easytv.eu/context/device/screenSize/xdpi":{
+               type: "number",
+               description: 'Device physical pixels per inch of the screen in the X dimension' 
+           },
+           "http://registry.easytv.eu/context/device/screenSize/ydpi":{
+               type: "number",
+               description: 'Device physical pixels per inch of the screen in the Y dimension' 
+           },
+          "http://registry.easytv.eu/context/device/screenSize/diameter":{
+             type: "number",
+             description: 'screen diameter in inches' 
+           },
+          "http://registry.easytv.eu/context/device/screenSize/densityValue":{
+             type: "number",
+             description: 'density point (0.75, 1.0, 1.5, 2.0, 3.0, 4.0)' 
+           },
+          "http://registry.easytv.eu/context/device/screenSize/densityBucket":{
+             type: "number",
+             description: 'density bucket (ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi)' 
+           },
+           "http://registry.easytv.eu/context/device/soundMeter":{
+             type: "string",
+             description: 'sound meter (Breathing, Mosquito, Whisper, Park, Quiet office, Normal conversation, Busy traffic, Red level)'
            }
           }
       },
@@ -564,7 +645,21 @@ module.exports =
                   }
               }
             }
-         }
+         },
+         Interaction_events: {
+          type: 'object',
+          properties: {
+            user_id: {
+              $ref: '#/components/schemas/user_id'
+            },
+            preferences: {
+              $ref: '#/components/schemas/preferences'
+            },
+            user_context: {
+                $ref: '#/components/schemas/user_context'
+            }
+          }
+       }
     }
   }
 }
