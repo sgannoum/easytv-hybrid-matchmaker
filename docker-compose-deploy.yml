@@ -7,6 +7,7 @@ services:
     networks:
       - easytv_net
     depends_on:
+      - personalization_db
       - stmm_rt
     environment:
       STMM_HOST: "stmm_rt"
@@ -43,6 +44,7 @@ services:
     networks:
       - easytv_net
     depends_on:
+      - personalization_db
       - stmm_rt
       - rbmm
     environment:
@@ -50,10 +52,18 @@ services:
       RBMM_HOST: "rbmm"
       STMM_PORT: "8077"
       RBMM_PORT: "8080"
+      DB_HOST: "personalization_db"
+      DB_PORT: "3306"
+      DB_NAME: "easytv"
+      DB_USER: "easytv"
+      DB_PASSWORD_FILE: "/run/secrets/hpapidb_pass"
       PORT: "8087"
       http_proxy: "http://161.27.206.250:8080"
       https_proxy: "http://161.27.206.250:8080"
       no_proxy: ".easytv.eng.it, rbmm, stmm_rt" 
+    secrets:
+      - hpapidb_pass
+      - hpapidbroot_password
     ports:
       - "8087:8087"
 
