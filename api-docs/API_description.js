@@ -196,15 +196,6 @@ module.exports =
          post: {
              tags: ['Personalize content'],
              description: 'Presonalize a user profile in relation to a specific content',
-             parameters:[
-              {
-                in: 'query',
-                name: 'radius',
-                schema: {
-                  type: 'number',
-                  maximum: 1.0
-                }
-              }],
              requestBody: {
                  content: {
                      'application/json': {
@@ -603,9 +594,6 @@ module.exports =
              },
              user_profile: {
                $ref: '#/components/schemas/user_profile'
-             },
-             user_context: {
-                 $ref: '#/components/schemas/user_context'
              },
              user_content: {
                  $ref: '#/components/schemas/user_content'

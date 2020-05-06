@@ -49,7 +49,7 @@ const msg = {
 			http_code: 401
 		},
 		success:{
-			msg_code: 401,
+			msg_code: 200,
 			msg_text: 'Success',
 			http_code: 200
 		}

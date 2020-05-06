@@ -49,21 +49,11 @@ const ContentPersonalization = () => {
 			}
 			
 			
-			var stmm_profile;
 			var rbmm_profile;
-			const radius = '?radius=' + (req.query.radius || '0.3') 
 			const user_id = req.body.user_id
 			const user_profile = req.body.user_profile
-			const user_context = req.body.user_context
 			var user_content = req.body.user_content
-						 
-			var stmm_options = {
-				    method: 'POST',
-				    uri: urls.STMM_PERSONALIZE_CONTENT + radius,
-				    body: req.body,
-				    json: true // Automatically stringifies the body to JSON
-			};
-			
+					
 			var rbmm_options = {
 				    method: 'POST',
 				    uri: urls.RBMM_PERSONALIZE_CONTENT,
@@ -146,7 +136,6 @@ const ContentPersonalization = () => {
 					
 					//replace user_content  
 					rbmm_options.body.user_content = user_content
-					stmm_options.body.user_content = user_content
 						
 					return rp(rbmm_options)
 					
@@ -169,43 +158,21 @@ const ContentPersonalization = () => {
 					console.log('[INFO][%s][%d][RBMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
 					
 					//set rbmm profile
-					rbmm_profile  = response.user_profile;
-										
-					return rp(stmm_options)
+					rbmm_profile  = response.user_profile;						
+					
+					//personalize content
+					//var hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, rbmm_profile, user_content)
+					
+					//console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(rbmm_profile))
+					
+					//write the user current content
+					DataBaseHandler.write_content_to_db(user_id, user_content)
+					
+					return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
 			  })
 			  .catch(function (err) { 
 				  if(!res.finished) {
 					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id , err)
-					  res.status(500).json({msg: 'Internal server error'});
-				  }
-			  }) 
-			
-			//chained request to STMM		 
-			  .then( function (response) {
-					
-					if(response == undefined) {
-						res.status(400).json({ msg: 'Internal server error' });
-						return
-					}
-	
-					console.log('[INFO][%s][%d][STMM]: %s', endpoint_tag, user_id, JSON.stringify(response.user_profile))
-	
-					//set stmm profile
-					stmm_profile  = response.user_profile;
-					
-					//personalize content
-					var hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, stmm_profile, rbmm_profile, user_context, user_content)
-					
-					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
-					
-					//write the user current content
-					DataBaseHandler.write_content_to_db(user_id, user_context, user_content)
-					
-					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
-			  })
-			  .catch(function (err) { 
-				  if(!res.finished) {
-					  console.error('[ERROR][%s][%d][STMM]: %s', endpoint_tag, user_id, err)
 					  res.status(500).json({msg: 'Internal server error'});
 				  }
 			  }) 
