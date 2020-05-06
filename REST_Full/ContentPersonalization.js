@@ -4,7 +4,7 @@
 var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
 var rp = require('request-promise')
 var urls = require('./URLs.js')
-var msg = require('./Messages.js')
+var msg = require('./Messages.js').msg
 var DataBaseHandler = require('../lib/DataBaseHandler.js')
 
 const endpoint_tag = 'PCnt';
@@ -25,13 +25,6 @@ const ContentPersonalization = () => {
 				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
-			}
-			
-			// Check for user profile
-			if (!req.body.user_context) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
-				return res.status(500).json({ code: msg.missing_user_context.msg_code, 
-					  						  msg: msg.missing_user_context.msg_text });
 			}
 			
 			// Check for user profile

@@ -4,7 +4,7 @@
 var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
 var rp = require('request-promise')
 var urls = require('./URLs.js')
-var msg = require('./Messages.js')
+var msg = require('./Messages.js').msg
 
 console.log()
 console.log()
