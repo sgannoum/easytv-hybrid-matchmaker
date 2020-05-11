@@ -3,7 +3,7 @@
  */
 
 const msg = {
-		missing__user_id: {
+		missing_user_id: {
 			msg_code: 401,
 			msg_text: 'Missing user id',
 			http_code: 401
