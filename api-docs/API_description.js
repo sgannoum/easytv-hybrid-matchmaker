@@ -204,7 +204,23 @@ module.exports =
                        }
                      }
                    },
-               required: true
+               required: true,
+               example: {
+            			"user_content": {
+            					"media": "Com_si_fos_ahir",
+            					"episode": "com_si_fos_ahir_capitol_428"
+            				},
+            		    "user_id": 1,
+            		    "user_profile": {"user_preferences": {"default": {"preferences": {
+            		        "http://registry.easytv.eu/application/cs/accessibility/detection/face": true,
+            		        "http://registry.easytv.eu/application/cs/accessibility/detection/sound": false,
+            		        "http://registry.easytv.eu/application/cs/accessibility/detection/text": false,
+            		        "http://registry.easytv.eu/application/cs/accessibility/detection/character": false,
+            		        "http://registry.easytv.eu/application/cs/cc/audio/subtitle": false,
+            		        "http://registry.easytv.eu/application/cs/accessibility/magnification/scale": 2.5,
+            		        "http://registry.easytv.eu/application/cs/audio/track": "ca"
+            		    }}}}
+                 }
              },
              responses: {
                '200': {
@@ -217,21 +233,8 @@ module.exports =
                 example: {
                   "user_id": 1,
                   "user_profile": {
-                    "user_preferences": {"default": {"preferences": {
-                                        "http://registry.easytv.eu/common/volume": 90,
-                                        "http://registry.easytv.eu/common/contrast": 100,
-                                        "http://registry.easytv.eu/application/control/voice": true,
-                                        "http://registry.easytv.eu/application/cs/audio/track": "ca",
-                                        "http://registry.easytv.eu/application/cs/ui/language": "en",
-                                        "http://registry.easytv.eu/application/cs/audio/volume": 33,
-                                        "http://registry.easytv.eu/application/cs/ui/text/size": "20",
-                                        "http://registry.easytv.eu/application/tts/audio/speed": 0,
-                                        "http://registry.easytv.eu/application/tts/audio/voice": "male",
-                                        "http://registry.easytv.eu/application/tts/audio/volume": 90
-                        }    
-                      },
-                        "recommendations": {
-                                  "preferences": {
+                    "user_preferences": {"default": {"preferences": {} },
+                     "recommendations": {"preferences": {
                                       "http://registry.easytv.eu/common/volume": 78,
                                       "http://registry.easytv.eu/common/contrast": 64,
                                       "http://registry.easytv.eu/common/content/audio/language": "EN",
@@ -239,11 +242,8 @@ module.exports =
                                       "http://registry.easytv.eu/application/tts/audio/language": "CA",
                                       "http://registry.easytv.eu/application/tts/audio/speed": 43,
                                       "http://registry.easytv.eu/application/tts/audio/volume": 75
-                                  }
-                        }
-                    }
-                  }
-                }
+                        }}}}
+                       }
                      }
                   }
                },
