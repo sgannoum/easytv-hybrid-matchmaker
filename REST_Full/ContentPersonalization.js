@@ -61,14 +61,18 @@ const ContentPersonalization = () => {
 				    json: true // Automatically stringifies the body to JSON
 			 };
 			
+			
 			var accessibility_options = {
 				    method: 'GET',
-				    uri: urls.ACCESSIBILITY_CONTENT+'/'+user_content.media+'/'+user_content.episode,
+				    uri: 'http://138.4.47.33:8080/media/services/Com_si_fos_ahir/com_si_fos_ahir_capitol_428',
+				    headers: {
+				        'Accept': '*',
+				        'Accept-Encoding': 'gzip, deflate',
+				        'Accept-Language': 'en-US,en;q=0.5',
+				        'HOST': '138.4.47.33:8080'
+				    },
 				    json: true // Automatically stringifies the body to JSON
-			 };
-			
-			var mpd_options = {
-				    method: 'GET'
+
 			 };
 			
 			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
@@ -81,7 +85,7 @@ const ContentPersonalization = () => {
 						res.status(400).json({ msg: 'Internal server error' });
 						return
 					}
-					
+
 					// Check for services section
 					if (!response.services) { 
 						console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_accessibility_services.msg_text )
@@ -96,57 +100,24 @@ const ContentPersonalization = () => {
 							  						  msg: msg.missing_mpd_url.msg_text });
 					}
 					
-					user_content = response
+					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, "process file content")
+					//convert content information
+					rbmm_options.body.user_content = hbmmImpl.get_user_content(response)
 					
-					//user_content = hbmmImpl.mp_to_json(response)
-					mpd_options.uri = user_content.mpd_url.replace('//media','/media')
+					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, JSON.stringify(rbmm_options.body.user_content))
+
+					return rp(rbmm_options)
 					
-					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, JSON.stringify(response))
-
-					return rp(mpd_options)
-
-			  })
-			  .catch(function (err) {
+			  }).catch(function (err) {
 				  if(!res.finished) {
-					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id, err)
+					  console.error('[ERROR][%s][%d][Accessibility services]: URL %s has error %s', endpoint_tag, user_id, accessibility_options.uri, err)
 
 					  if(err.error.code == 'ECONNREFUSED')	  
 						  res.status(500).json({msg: 'Internal server error'});
 					  else 
 						  res.status(500).json(err.error);
 				  }
-			  }) 
-			
-			//chained request to get MPD		 
-			  .then( function (response) {
-					
-					if(response == undefined) {
-						res.status(400).json({ msg: 'Internal server error' });
-						return
-					}
-
-					console.log('[INFO][%s][%d][MPD]: %s', endpoint_tag, user_id, response)
-
-					var mpd_file_content  = response
-					
-					//process content to be used for and print any error that occurs
-					user_content = hbmmImpl.get_user_content(user_content, mpd_file_content)
-					
-					//console.log('[INFO][%s][%d][MPD]: %s', endpoint_tag, user_id, JSON.stringify(user_content))
-					
-					//replace user_content  
-					rbmm_options.body.user_content = user_content
-						
-					return rp(rbmm_options)
-					
-			  })
-			  .catch(function (err) { 
-				  if(!res.finished) {
-					  console.error('[ERROR][%s][%d][MPD]: %s', endpoint_tag, user_id, err)
-					  res.status(500).json({msg: 'Internal server error'});
-				  }
-			  }) 
-			
+			  }) 			
 			//chained request to RBMM		 
 		  	  .then( function (response) {
 					
@@ -160,17 +131,13 @@ const ContentPersonalization = () => {
 					//set rbmm profile
 					rbmm_profile  = response.user_profile;						
 					
-					//personalize content
-					//var hybrid_user_profile = hbmmImpl.personalize_content(user_id, user_profile, rbmm_profile, user_content)
-					
-					//console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(rbmm_profile))
-					
 					//write the user current content
 					DataBaseHandler.write_content_to_db(user_id, user_content)
 					
+					//forward rbmm profile
 					return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
-			  })
-			  .catch(function (err) { 
+					
+			  }).catch(function (err) { 
 				  if(!res.finished) {
 					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id , err)
 					  res.status(500).json({msg: 'Internal server error'});
