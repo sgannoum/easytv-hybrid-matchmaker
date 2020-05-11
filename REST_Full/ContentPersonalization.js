@@ -29,7 +29,7 @@ const ContentPersonalization = () => {
 			
 			// Check for user profile
 			if (!req.body.user_content) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
+				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content.msg_text)
 				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
 					  						  msg: msg.missing_user_content.msg_text });
 			}
