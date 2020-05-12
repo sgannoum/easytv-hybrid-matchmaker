@@ -54,7 +54,7 @@ const ProfilePersonalization = () => {
 						
 			//chained request to rbmm			 
 			rp(rbmm_options)
-			  .then( function (response) {
+			  .then((response) => {
 					
 					if(response == undefined) {
 						res.status(400).json({ msg: 'Internal server error' });
@@ -68,7 +68,7 @@ const ProfilePersonalization = () => {
 					
 					return rp(stmm_options)
 			  })
-			  .catch(function (err) {
+			  .catch((err)  => {
 				  if(!res.finished) {
 					  console.error(JSON.stringify(err))
 
@@ -82,7 +82,7 @@ const ProfilePersonalization = () => {
 			  }) 
 			
 			//chained request to stmm	
-			  .then( function (response) {
+			  .then((response) => {
 					
 					if(response == undefined) {
 						res.status(400).json({ msg: 'Internal server error' });
@@ -101,7 +101,7 @@ const ProfilePersonalization = () => {
 					
 					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
 			  })
-			  .catch(function (err) { 
+			  .catch((err) =>  { 
 				  if(!res.finished){
 					  console.error('[ERROR][%s][%d][STMM]: %s', endpoint_tag, user_id, err)
 					  console.error(res)

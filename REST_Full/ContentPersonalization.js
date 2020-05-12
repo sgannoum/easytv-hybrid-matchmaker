@@ -9,6 +9,45 @@ var DataBaseHandler = require('../lib/DataBaseHandler.js')
 
 const endpoint_tag = 'PCnt';
 
+/**
+ * Convert accessibility services information into a proper user_content object
+ */
+function get_user_content (access_services) {
+	
+	console.log(access_services)
+	//parse service file content
+	var user_content = {'http://registry.easytv.eu/application/cs/accessibility/detection/face': false, 
+						'http://registry.easytv.eu/application/cs/accessibility/detection/text': false, 
+						'http://registry.easytv.eu/application/cs/accessibility/detection/sound':false, 
+						'http://registry.easytv.eu/application/cs/accessibility/detection/character': false , 
+						'http://registry.easytv.eu/application/cs/audio/track': [], 
+						'http://registry.easytv.eu/application/cs/cc/subtitles/language': []};
+
+
+	var services = access_services.services
+	for(var i in services) {
+		if(services[i] == 'face-magnification')
+			user_content['http://registry.easytv.eu/application/cs/accessibility/detection/face'] = true
+			
+		if(services[i] == 'text_detection')
+			user_content['http://registry.easytv.eu/application/cs/accessibility/detection/text'] = true
+			
+		if(services[i] == 'sounds-recognition')
+			user_content['http://registry.easytv.eu/application/cs/accessibility/detection/sound'] = true
+			
+		if(services[i] == 'character-recognition')
+			user_content['http://registry.easytv.eu/application/cs/accessibility/detection/character'] = true
+	}
+		
+	if(access_services['audio_langs'])
+		user_content['http://registry.easytv.eu/application/cs/audio/track'] = access_services['audio_langs']
+		
+	if(access_services['subtitle_langs'])
+		user_content['http://registry.easytv.eu/application/cs/cc/subtitles/language'] = access_services['subtitle_langs']
+			
+	return user_content
+}
+
 const ContentPersonalization = () => {
 	
   const personalize_content = (req, res) => {	
@@ -76,10 +115,10 @@ const ContentPersonalization = () => {
 			 };
 			
 			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
-
+			
 			//chained request to content services		 
 			rp(accessibility_options)
-			 .then( function (response) {
+			 .then((response) => {
 					
 					if(response == undefined) {
 						res.status(400).json({ msg: 'Internal server error' });
@@ -102,13 +141,13 @@ const ContentPersonalization = () => {
 					
 					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, "process file content")
 					//convert content information
-					rbmm_options.body.user_content = hbmmImpl.get_user_content(response)
+					rbmm_options.body.user_content = get_user_content(response)
 					
 					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, JSON.stringify(rbmm_options.body.user_content))
 
 					return rp(rbmm_options)
 					
-			  }).catch(function (err) {
+			  }).catch((err) => {
 				  if(!res.finished) {
 					  console.error('[ERROR][%s][%d][Accessibility services]: URL %s has error %s', endpoint_tag, user_id, accessibility_options.uri, err)
 
@@ -119,7 +158,7 @@ const ContentPersonalization = () => {
 				  }
 			  }) 			
 			//chained request to RBMM		 
-		  	  .then( function (response) {
+		  	  .then((response) => {
 					
 					if(response == undefined) {
 						res.status(400).json({ msg: 'Internal server error' });
@@ -132,12 +171,19 @@ const ContentPersonalization = () => {
 					rbmm_profile  = response.user_profile;						
 					
 					//write the user current content
-					DataBaseHandler.write_content_to_db(user_id, user_content)
+					DataBaseHandler.write_content_to_db(user_id, user_content, (error) => {
+						if(error)
+						{
+						    console.log("[ERROR][%s][%d]: %s", endpoint_tag, user_id, error)
+						} else {
+					    	console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, "Event has been updated...")
+						}
+					})
 					
 					//forward rbmm profile
 					return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
 					
-			  }).catch(function (err) { 
+			  }).catch((err) => { 
 				  if(!res.finished) {
 					  console.error('[ERROR][%s][%d][RBMM]: %s', endpoint_tag, user_id , err)
 					  res.status(500).json({msg: 'Internal server error'});
@@ -151,7 +197,7 @@ const ContentPersonalization = () => {
   const get_information =  (req, res) =>  {
 	  
     try {
-        return res.status(200).json({message: "To personalize context do one of the following: " +
+        return res.status(200).json({message: "To personalize content do one of the following: " +
     		"								HTTP POST /personalize/context \r\n" +
     		"								Content-Type: application/json \r\n" +
     		"								\r\n" +

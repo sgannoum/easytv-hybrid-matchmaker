@@ -33,12 +33,18 @@ const InteractionEventsHandler = () => {
 			try 
 			{		
 				//update event
-				DataBaseHandler.update_event_db(interaction_events);
-				
-				return res.status(200).json({ msg: "Ok" });;
-				
+				DataBaseHandler.update_event_db(interaction_events, (error) => {
+					if(error)
+					{
+						res.status(500).json({ msg: error.sqlMessage });
+					    console.log("[ERROR][%s][%d]: %s", endpoint_tag, user_id, error)
+					} else {
+						res.status(200).json({ msg: "Ok" });
+					}
+				});
+								
 			} catch(err) {
-		        console.log('user['+user_id+'][ERROR]: ',err);
+			    console.log("[ERROR]["+user_id+"]: "+ err)
 		    	if(err instanceof TypeError)
 			        return res.status(500).json({ msg: err.message });
 		    	else
