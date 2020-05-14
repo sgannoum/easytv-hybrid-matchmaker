@@ -1,55 +1,52 @@
 /**
  * A HTTP POST handler for route /match
  */
-var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
-var rp = require('request-promise')
-var urls = require('./URLs.js')
-var msg = require('./Messages.js')
-var DataBaseHandler = require('../lib/DataBaseHandler.js')
+const UserModel = require('../models/UserModel');
+const InteractionEvent = require('../models/InteractionEvent');
+const sequelize = require('../config/database');
 
 const endpoint_tag = 'IE';
 
 const InteractionEventsHandler = () => {
-  const interaction_events_handler = (req, res) => {	
-	  	
-			// Check for user Id
-			if (!req.body.user_id) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
-				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
-										      msg: msg.missing_user_id.msg_text });
-			}
-			
-			// Check for user profile
-			if (!req.body.interaction_events) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
-				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
-											  msg: msg.missing_user_profile.msg_text });
-			}
-			
-			var user_id = req.body.user_id
-			var interaction_events = req.body
-			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(interaction_events))
-						 
-			try 
-			{		
-				//update event
-				DataBaseHandler.update_event_db(interaction_events, (error) => {
-					if(error)
-					{
-						res.status(500).json({ msg: error.sqlMessage });
-					    console.log("[ERROR][%s][%d]: %s", endpoint_tag, user_id, error)
-					} else {
-						res.status(200).json({ msg: "Ok" });
-					}
-				});
-								
-			} catch(err) {
-			    console.log("[ERROR]["+user_id+"]: "+ err)
-		    	if(err instanceof TypeError)
-			        return res.status(500).json({ msg: err.message });
-		    	else
-		    		return res.status(500).json({ msg: 'Internal server error' });
-			}
+  const interaction_events_handler = async (req, res) => {	
+	  				
+	    /*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+		var user_id = req.body.user_id
+	    
+		//find user active profile and then update the events history
+	    UserModel.findOne({ where: { userId: user_id, isActive: true }})
+	    		 .then( userModel => {
+	        			
+		        	  if(userModel == null) {
+		      			  console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, 'User has no active profile')
+		                  return res.status(500).json({ msg: 'Bad Request: No record found.' });
+		        	  }
+		        		  
+		        	  //write events to db
+		        	  var events = req.body.interaction_events
+		    		  for(i = 0; i < events.length; i++)
+		    		  {
+			              try {
+			            	  
+			                  InteractionEvent.create({
+  									modelId: userModel.id,
+				                    preferences: events[i].preferences,
+				                    context: events[i].user_context,
+				                    time: events[i].user_context['http://registry.easytv.eu/context/time']
+							 });
+			                  
+			                } catch (err) {
+			                	console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, err)
+			                	return res.status(500).json({ msg: 'Internal server error: ' + err });
+			                }
+		    		  }
+		        	  
+		              return res.status(200).json({ msg: "Ok" });
+		              
+		          }).catch( err => {
+	                console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, err)
+		            return res.status(500).json({ msg: 'Internal server error: ' + err });
+		          });
 	};
 	
   return {

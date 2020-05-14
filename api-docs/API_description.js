@@ -49,7 +49,6 @@ module.exports =
 	                    $ref: '#/components/schemas/personalize_profile'
 	                  },
 	                  example: {
-	                        "user_id": 1,
 	                      "user_profile": {
 	                        "user_preferences": {
 	                          "default": {"preferences": {
@@ -116,7 +115,6 @@ module.exports =
                       $ref: '#/components/schemas/personalize_context'
                     },
             example: {
-              "user_id": 1,
               "user_context": {
                   "http://registry.easytv.eu/context/location": "gr",
                   "http://registry.easytv.eu/context/time": "12:00:00"
@@ -210,7 +208,6 @@ module.exports =
             					"media": "Com_si_fos_ahir",
             					"episode": "com_si_fos_ahir_capitol_428"
             				},
-            		    "user_id": 1,
             		    "user_profile": {"user_preferences": {"default": {"preferences": {
             		        "http://registry.easytv.eu/application/cs/accessibility/detection/face": true,
             		        "http://registry.easytv.eu/application/cs/accessibility/detection/sound": false,
@@ -231,7 +228,6 @@ module.exports =
                            $ref: '#/components/schemas/personalize_output'
                         },
                 example: {
-                  "user_id": 1,
                   "user_profile": {
                     "user_preferences": {"default": {"preferences": {} },
                      "recommendations": {"preferences": {
@@ -271,7 +267,6 @@ module.exports =
                     $ref: '#/components/schemas/Interaction_events'
                   },
                   example: {
-                      "user_id": 1,
                       "interaction_events": [
                           {
                               "user_context": {
@@ -310,10 +305,6 @@ module.exports =
   },
   components: {
     schemas: {
-      user_id: {
-        type: 'integer',
-        description: 'The user id, taken from the login'
-      },
       user_context: {
         type: 'object',
           properties: {
@@ -532,9 +523,6 @@ module.exports =
       error_message:{
         type: 'object',
           properties: {
-              user_id: {
-                type: 'integer'
-              },
               msg: {
                 type: 'string'
               }
@@ -564,9 +552,6 @@ module.exports =
       personalize_profile: {
         type: 'object',
         properties: {
-          user_id: {
-            $ref: '#/components/schemas/user_id'
-          },
           user_profile: {
             $ref: '#/components/schemas/user_profile'
           }
@@ -575,9 +560,6 @@ module.exports =
       personalize_context: {
           type: 'object',
           properties: {
-            user_id: {
-              $ref: '#/components/schemas/user_id'
-            },
             user_profile: {
               $ref: '#/components/schemas/user_profile'
             },
@@ -589,9 +571,6 @@ module.exports =
        personalize_content: {
            type: 'object',
            properties: {
-             user_id: {
-               $ref: '#/components/schemas/user_id'
-             },
              user_profile: {
                $ref: '#/components/schemas/user_profile'
              },
@@ -603,9 +582,6 @@ module.exports =
         personalize_output: {
             type: 'object',
             properties: {
-              user_id: {
-                $ref: '#/components/schemas/user_id'
-              },
               user_profile: {
                   type: 'object',
                   properties: {
@@ -637,9 +613,6 @@ module.exports =
          Interaction_events: {
           type: 'object',
           properties: {
-            user_id: {
-              $ref: '#/components/schemas/user_id'
-            },
             preferences: {
               $ref: '#/components/schemas/preferences'
             },

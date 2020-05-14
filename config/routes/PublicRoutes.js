@@ -22,7 +22,12 @@ const publicRoutes = {
 		'GET  /personalize/rules': 				'HiddenEndPoints.get_Rbmm_Rules',
   
 		'POST /analysis/clusters': 				'HiddenEndPoints.post_stmm_profiles',
-		'GET  /analysis/clusters': 				'HiddenEndPoints.get_stmm_profiles'
+		'GET  /analysis/clusters': 				'HiddenEndPoints.get_stmm_profiles',
+		
+		'POST /user/login': 					'UserLogin.login',
+		'POST /user/logout': 					'UserLogin.logout',
+		'POST /user/dummylogin': 				'UserLogin.getDummyToken'
+
 };
 
 module.exports = publicRoutes;

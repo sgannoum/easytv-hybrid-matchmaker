@@ -5,20 +5,13 @@ var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
 var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js').msg
-var DataBaseHandler = require('../lib/DataBaseHandler.js')
+const UserModel = require('../models/UserModel');
 
 const endpoint_tag = 'PCxt';
 
 const ContextPersonalization = () => {
-  const personalize_context = (req, res) => {	
-		 
-			// Check for user Id
-			if (!req.body.user_id) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
-				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
-										      msg: msg.missing_user_id.msg_text });
-			}
-			
+  const personalize_context = async (req, res) => {	
+		 		
 			// Check for user profile
 			if (!req.body.user_profile) { 
 				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
@@ -36,7 +29,7 @@ const ContextPersonalization = () => {
 			var stmm_profile;
 			var rbmm_profile;
 			const radius = '?radius=' + (req.query.radius || '0.3') 
-			const user_id = req.body.user_id
+			const user_id = req.token.id
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
 			
@@ -100,17 +93,24 @@ const ContextPersonalization = () => {
 					
 					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
 					
-					//write the user current context
-					DataBaseHandler.write_context_to_db(user_id, user_context, (error) => {
-						if(error)
-						{
-						    console.log("[ERROR][%s][%d]: %s", endpoint_tag, user_id, error)
-						} else {
-					    	console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, "Event has been updated...")
-						}
-					})
-					
-					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
+					//update the profile user content
+				    UserModel.findOne({where: { userId: user_id, isActive: true}})
+					         .then( userModel => {
+					        	
+					        	  if(userModel == null) {
+					      			  console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, 'User has no active profile')
+					                  return res.status(400).json({ msg: 'Bad Request: No record found.' });
+					        	  }
+					        	
+					            return userModel.update({ userContext: user_context})
+					            				.then( userModel => {
+										                return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
+										         }).catch(err => {
+										                return res.status(500).json({ msg: 'Internal server error: ' + err });
+										          });
+					        }).catch( err => {
+					          return res.status(500).json({ msg: 'Internal server error: ' + err });
+					        });
 			  })
 			  .catch((err) => {
 				  if(!res.finished) {

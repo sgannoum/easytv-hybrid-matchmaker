@@ -36,11 +36,18 @@ const server = http.Server(app);
 const config = require('../config');
 const path = process.cwd().endsWith('REST_Full') ? './' : './REST_Full/' 
 const mappedOpenRoutes = mapRoutes(config.publicRoutes, path);
+const dbService = require('../services/db.service');
+const auth = require('../policies/auth.policy');
+const DB = dbService(environment, config.migrate).start();
 
 //Api handler
 const swaggerUi = require('swagger-ui-express');
 const openApiDocumentation = require('../api-docs/API_description.js');
 app.use('/EasyTV_HBMM_Restful_WS/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
+
+//allow cross origin requests
+//configure to only allow requests from certain origins
+app.use(cors());
 
 //secure express app
 app.use(helmet({
@@ -53,6 +60,8 @@ app.use(helmet({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//secure your private routes with jwt authentication middleware
+app.all('/EasyTV_HBMM_Restful_WS/[^user]*', (req, res, next) => auth(req, res, next));
 
 //fill routes for express application
 app.use('/EasyTV_HBMM_Restful_WS', mappedOpenRoutes);
@@ -66,5 +75,7 @@ server.listen(config.port, () => {
 	 process.exit(1);
 	}	
 	console.log('Server up, listening to port ' + config.port);
+	
+	return DB;
 });
 

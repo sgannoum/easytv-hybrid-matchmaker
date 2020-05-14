@@ -14,15 +14,8 @@ console.log("[INFO]:%s %s", "Connect to rbmm on Url", urls.RBMM_URL)
 const endpoint_tag = 'PF';
 
 const ProfilePersonalization = () => {
-  const personalize_profile = (req, res) => {	
-	  	
-			// Check for user Id
-			if (!req.body.user_id) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_id.msg_text)
-				return res.status(500).json({ code: msg.missing_user_id.msg_code, 
-										      msg: msg.missing_user_id.msg_text });
-			}
-			
+  const personalize_profile = async (req, res) => {	
+	  			
 			// Check for user profile
 			if (!req.body.user_profile) { 
 				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
@@ -33,7 +26,7 @@ const ProfilePersonalization = () => {
 			var stmm_profile;
 			var rbmm_profile;
 			const radius = '?radius=' + (req.query.radius || '0.3') 
-			const user_id = req.body.user_id
+			const user_id = req.token.id
 			const user_profile = req.body.user_profile
 			
 			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))
