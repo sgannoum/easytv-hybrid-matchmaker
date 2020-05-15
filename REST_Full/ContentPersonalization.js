@@ -6,7 +6,7 @@ var rp = require('request-promise')
 var urls = require('./URLs.js')
 var msg = require('./Messages.js').msg
 const UserModel = require('../models/UserModel');
-
+const sequelize = require('../config/database');
 const endpoint_tag = 'PCnt';
 
 /**
@@ -162,25 +162,34 @@ const ContentPersonalization = () => {
 					
 					//set rbmm profile
 					rbmm_profile  = response.user_profile;						
-							
-					//update the profile user context
-				    UserModel.findOne({where: { userId: user_id, isActive: true}})
-					          .then( userModel => {
-					        	
-					        	  if(userModel == null) {
-					      			  console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, 'User has no active profile')
-					                  return res.status(400).json({ msg: 'Bad Request: No record found.' });
-					        	  }
-					        	
-					              return userModel.update({ userContent: user_content})
-					            				  .then( userModel => {
-										                return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
-										          }).catch(err => {
-										                return res.status(500).json({ msg: 'Internal server error: ' + err });
-										          });
-					         }).catch( err => {
-					          return res.status(500).json({ msg: 'Internal server error: ' + err });
-					         });
+
+				    return sequelize.transaction(async (t) => {
+				    	
+				    	//find active profile id
+				    	 const userModel = await UserModel.findOne({
+				    		 	  where: { userId: user_id, isActive: true},
+				    	          transaction: t,
+				    	          lock: t.LOCK.UPDATE //SELECT ... FOR UPDATE. This essentially locks the selected record.
+				    			 })
+				    	
+			        	  if(userModel == null) {
+			      			  console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, 'User has no active profile')
+			                  return res.status(400).json({ msg: 'Bad Request: No record found.' });
+			        	  }
+			        	
+				    	 //update user context
+				    	 await userModel.update({ 
+				    		 userContent: user_content
+				    		 },
+				    		 { transaction: t})
+				    	 
+				      }).then(result => {
+			                return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
+				      }).catch(err => {
+				        //console.log(err);
+			                return res.status(500).json({ msg: 'Internal server error: ' + err });
+				      }); 
+				    
 										
 			  }).catch((err) => { 
 				  if(!res.finished) {

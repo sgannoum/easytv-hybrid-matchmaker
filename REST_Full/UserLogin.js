@@ -13,8 +13,8 @@ const UserLogin = () => {
    //TODO remove
    const getDummyToken = (req, res) => {
 	   
-	  const user_id = req.user_id
-	  
+	  const user_id = req.body.user_id
+	  console.log(user_id)
       return res.status(200).json({jwt : JWTService().issue({id: user_id})});
    };	
 	
@@ -26,7 +26,7 @@ const UserLogin = () => {
 	  //TODO load any user' related informations
 	  //TODO check for user history of interaction suggestions
 	  
-      return res.status(200).json({msg : "ok"});
+      return res.status(200).json({user_id : user_id});
   };
 	
   const logout =  (req, res) =>  {
