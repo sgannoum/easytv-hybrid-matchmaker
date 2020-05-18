@@ -33,7 +33,7 @@ const InteractionEventsHandler = () => {
 				                    preferences: events[i].preferences,
 				                    context: events[i].user_context,
 				                    time: events[i].user_context['http://registry.easytv.eu/context/time']
-							 });
+			                  });
 			                  
 			                } catch (err) {
 			                	console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, err)

@@ -16,9 +16,12 @@ const endpoint_tag = 'PF';
 const ProfilePersonalization = () => {
   const personalize_profile = async (req, res) => {	
 	  			
+	    	/*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+	  		const user_id = req.token.id
+
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
@@ -26,7 +29,6 @@ const ProfilePersonalization = () => {
 			var stmm_profile;
 			var rbmm_profile;
 			const radius = '?radius=' + (req.query.radius || '0.3') 
-			const user_id = req.token.id
 			const user_profile = req.body.user_profile
 			
 			console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, JSON.stringify(req.body))

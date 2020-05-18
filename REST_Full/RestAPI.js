@@ -61,7 +61,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //secure your private routes with jwt authentication middleware
-app.all('/EasyTV_HBMM_Restful_WS/[^user]*', (req, res, next) => auth(req, res, next));
+app.all('/EasyTV_HBMM_Restful_WS/*', (req, res, next) => auth(req, res, next));
 
 //fill routes for express application
 app.use('/EasyTV_HBMM_Restful_WS', mappedOpenRoutes);

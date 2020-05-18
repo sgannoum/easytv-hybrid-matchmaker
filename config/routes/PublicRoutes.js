@@ -26,7 +26,7 @@ const publicRoutes = {
 		
 		'POST /user/login': 					'UserLogin.login',
 		'POST /user/logout': 					'UserLogin.logout',
-		'POST /user/dummylogin': 				'UserLogin.getDummyToken'
+		'POST /dummylogin': 				    'UserLogin.getDummyToken'
 
 };
 

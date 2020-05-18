@@ -51,38 +51,39 @@ function get_user_content (access_services) {
 const ContentPersonalization = () => {
 	
   const personalize_content = async (req, res) => {	
-	  
+
+	  		/*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+			const user_id = req.token.id
+
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_content.msg_text)
 				return res.status(500).json({ code: msg.missing_user_content.msg_code, 
 					  						  msg: msg.missing_user_content.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content.media) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content_media.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_content_media.msg_text)
 				return res.status(500).json({ code: msg.missing_user_content_media.msg_code, 
 					  						  msg: msg.missing_user_content_media.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_content.episode) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_content_episode.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_content_episode.msg_text)
 				return res.status(500).json({ code: msg.missing_user_content_episode.msg_code, 
 					  						  msg: msg.missing_user_content_episode.msg_text });
 			}
 			
-			
 			var rbmm_profile;
-			const user_id = req.token.id
 			const user_profile = req.body.user_profile
 			var user_content = req.body.user_content
 					

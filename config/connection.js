@@ -1,18 +1,18 @@
 var fs = require("fs")
 
 const development = {
-  database: 'easytv',
-  username: 'easytv',
-  password: 'easytv',
-  host: 'localhost',
+  database: process.env.DB_NAME || 'easytv',
+  username: process.env.DB_USER || 'easytv',
+  password: process.env.DB_PASS || 'easytv',
+  host: process.env.DB_HOST || 'localhost',
   dialect: 'mysql' ||'sqlite' || 'postgres',
 };
 
 const testing = {
-  database: 'easytv',
-  username: 'easytv',
-  password: 'easytv',
-  host: 'localhost',
+  database: process.env.DB_NAME || 'easytv',
+  username: process.env.DB_USER || 'easytv',
+  password: process.env.DB_PASS || 'easytv',
+  host: process.env.DB_HOST || 'localhost',
   dialect: 'mysql' ||'sqlite' || 'postgres',
 };
 

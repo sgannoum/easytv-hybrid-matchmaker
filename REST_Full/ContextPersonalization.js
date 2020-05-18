@@ -11,18 +11,21 @@ const sequelize = require('../config/database');
 const endpoint_tag = 'PCxt';
 
 const ContextPersonalization = () => {
-  const personalize_context = async (req, res) => {	
-		 		
+  const personalize_context = (req, res) => {	
+		 	
+	  		/*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+			const user_id = req.token.id
+	  
 			// Check for user profile
 			if (!req.body.user_profile) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_profile.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_profile.msg_text)
 				return res.status(500).json({ code: msg.missing_user_profile.msg_code, 
 											  msg: msg.missing_user_profile.msg_text });
 			}
 			
 			// Check for user profile
 			if (!req.body.user_context) { 
-				console.error('[ERROR][%s]: %s', endpoint_tag, msg.missing_user_context.msg_text)
+				console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, msg.missing_user_context.msg_text)
 				return res.status(500).json({ code: msg.missing_user_context.msg_code, 
 					  						  msg: msg.missing_user_context.msg_text });
 			}
@@ -30,7 +33,6 @@ const ContextPersonalization = () => {
 			var stmm_profile;
 			var rbmm_profile;
 			const radius = '?radius=' + (req.query.radius || '0.3') 
-			const user_id = req.token.id
 			const user_profile = req.body.user_profile
 			const user_context = req.body.user_context
 			
@@ -117,7 +119,7 @@ const ContextPersonalization = () => {
 				      }).then(result => {
 			                return res.status(200).json({user_id: user_id, user_profile: rbmm_profile});
 				      }).catch(err => {
-				        //console.log(err);
+				    	  	console.error('[ERROR][%s][%d]: %s', endpoint_tag, user_id, 'User has no active profile');
 			                return res.status(500).json({ msg: 'Internal server error: ' + err });
 				      }); 
 					
