@@ -25,45 +25,44 @@ const UserLogin = () => {
 	  
 	  const user_id = req.token.id;
 	  
-	  //load user hybrid info
+	  //load user hybrid related information
 	  await usersInfoHandler.load(user_id);
 	  
-	  var profileSuggestion = undefined
+	  //get and update user suggestions
 	  return sequelize.transaction(async (t) => {
 	    	
-    	//find active profile id
-    	 const userModel = await UserModel.findOne({
-    		 	  where: { userId: user_id, isActive: true},
-    	          transaction: t,
-    	          lock: t.LOCK.SHARE })
-    	
-    	 if(userModel == null) {
-  			  console.error('[ERROR][LG][%d]: %s', user_id, 'User has no active profile')
-              return res.status(400).json({ msg: 'Bad Request: No record found.' });
-    	 }
-    	
-    	 //profile modification suggestions
-    	 profileSuggestion = await ModificationSuggestions.findOne({
-    			 					 where: { id: userModel.userId },
-						    		 transaction: t, 
-					    	         lock: t.LOCK.UPDATE })
-					
-					    	         
-	     console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, profileSuggestion == null ? 'User has no profile modification suggestions' : profileSuggestion)
-	     
-    	 if(profileSuggestion == null) {
-    		  profileSuggestion = {suggestion: {}}
-              return 
-    	 }	
-    	 
-    	 //reset user associated suggestions
-    	 await profileSuggestion.update (
-				 { id: userModel.userId, suggestion: {} },
-	    		 { transaction: t})	
-							    		 
+	    	//find active profile id
+	    	 const userModel = await UserModel.findOne({
+	    		 	  where: { userId: user_id, isActive: true},
+	    	          transaction: t,
+	    	          lock: t.LOCK.SHARE })
+	    	
+	    	 if(userModel == null) {
+	  			  console.error('[ERROR][LG][%d]: %s', user_id, 'User has no active profile')
+	              return res.status(400).json({ msg: 'Bad Request: No record found.' });
+	    	 }
+	    	
+	    	 //profile modification suggestions
+	    	 var profileSuggestion = await ModificationSuggestions.findOne({
+	    			 					 where: { id: userModel.userId },
+							    		 transaction: t, 
+						    	         lock: t.LOCK.UPDATE })
+								    	         
+		     console.log('[INFO][%s][%d]: %s', endpoint_tag, user_id, profileSuggestion == null ? 'User has no profile modification suggestions' : JSON.stringify(profileSuggestion))  
+	    	
+		     if(profileSuggestion == null) return {suggestion: {}}
+	    	 
+	    	 //reset user associated suggestions
+	    	 await ModificationSuggestions.update (
+					 values  = { suggestion: {} },
+					 options = { where: { id: userModel.userId },
+		    			 	     transaction: t})
+		    			 	    
+		     return profileSuggestion  
+	    		
 	      }).then(result => {
 	    	// Committed
-                return res.status(200).json({user_id: user_id, profile_modification_suggestions: profileSuggestion.suggestion});
+                return res.status(200).json({user_id: user_id, profile_modification_suggestions: result.suggestion});
 	      }).catch(err => {
 	    	// Rolled back
                 return res.status(500).json({ msg: 'Internal server error: ' + err });
