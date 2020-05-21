@@ -90,11 +90,14 @@ const ProfilePersonalization = () => {
 					stmm_profile  = response.user_profile;
 					
 					//personalize profile
-					var  hybrid_user_profile = hbmmImpl.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile)
-					
-					console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
-					
-					return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
+					hbmmImpl
+					.personalize_profile(user_id, user_profile, stmm_profile, rbmm_profile)
+					.then( hybrid_user_profile => {
+						
+						console.log('[INFO][%s][%d][HBMM]: %s', endpoint_tag, user_id, JSON.stringify(hybrid_user_profile))
+						return res.status(200).json({user_id: user_id, user_profile: hybrid_user_profile});
+					})
+
 			  })
 			  .catch((err) =>  { 
 				  if(!res.finished){

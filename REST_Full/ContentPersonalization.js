@@ -133,7 +133,6 @@ const ContentPersonalization = () => {
 							  						  msg: msg.missing_mpd_url.msg_text });
 					}
 					
-					console.log('[INFO][%s][%d][Accessibility services]: %s', endpoint_tag, user_id, "process file content")
 					//convert content information
 					rbmm_options.body.user_content = get_user_content(response)
 					
@@ -190,7 +189,6 @@ const ContentPersonalization = () => {
 				        //console.log(err);
 			                return res.status(500).json({ msg: 'Internal server error: ' + err });
 				      }); 
-				    
 										
 			  }).catch((err) => { 
 				  if(!res.finished) {
