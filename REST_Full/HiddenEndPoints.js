@@ -29,9 +29,7 @@ const HiddenEndPoints = () => {
 					res.status(400).json({ msg: 'Internal server error' });
 					return
 				}
-				
-				console.log('[INFO][%s][RBMM]: %s', endpoint_tag, JSON.stringify(response))
-				
+								
 				return res.status(200).json(response);
 		  })
 		  .catch(function (err) { 
@@ -58,9 +56,7 @@ const HiddenEndPoints = () => {
 					res.status(400).json({ msg: 'Internal server error' });
 					return
 				}
-				
-				console.log('[INFO][%s][RBMM]: %s', endpoint_tag, JSON.stringify(response))
-				
+								
 				return res.status(200).json(response);
 		  })
 		  .catch(function (err) { 
@@ -85,9 +81,7 @@ const HiddenEndPoints = () => {
 					res.status(400).json({ msg: 'Internal server error' });
 					return
 				}
-				
-				console.log('[INFO][%s][STMM]: %s', endpoint_tag, JSON.stringify(response))
-				
+								
 				return res.status(200).json(response);
 		  })
 		  .catch(function (err) { 
@@ -113,9 +107,7 @@ const HiddenEndPoints = () => {
 					res.status(400).json({ msg: 'Internal server error' });
 					return
 				}
-				
-				console.log('[INFO][%s][STMM]: %s', endpoint_tag, JSON.stringify(response))
-				
+								
 				return res.status(200).json(response);
 		  })
 		  .catch(function (err) { 
