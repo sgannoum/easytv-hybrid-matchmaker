@@ -23,16 +23,25 @@ const Personalization = () => {
   
   const login =  (req, res) =>  {
 	    
-	  const user_id = req.token.id;
+	  /*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+	  const user_id = req.token.id
 	  
 	  //load user hybrid related information
-	  usersInfoHandler.load(user_id);
+	  usersInfoHandler.load(user_id)
+	  .then( () => { 
+		  return res.status(200).json({ msg: 'Ok' })
+	   })
+	  .catch(err => {
+		  return res.status(500).json({ msg: 'No user found with id ' + user_id })
+	  })
 	  
   };
 	
   const logout =  (req, res) =>  {
 	    
-	  const user_id = req.token.id;
+	  /*req.token.id holds the userId of a valid jwt. This argument is returned by the authorization middleware.*/
+	  const user_id = req.token.id
+  			
 	  console.log('[INFO][LO][%d]: %s', user_id, 'User logout')
 
 	  //persist user information
