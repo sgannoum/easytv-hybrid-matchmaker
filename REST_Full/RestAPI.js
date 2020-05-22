@@ -24,6 +24,7 @@ const helmet = require('helmet');
 const http = require('http');
 const mapRoutes = require('express-routes-mapper');
 const cors = require('cors');
+const { createTerminus } = require('@godaddy/terminus')
 
 //environment: development, staging, testing, production
 const environment = process.env.NODE_ENV || 'development';
@@ -39,6 +40,7 @@ const mappedOpenRoutes = mapRoutes(config.publicRoutes, path);
 const mappedAuthRoutes = mapRoutes(config.privateRoutes, path);
 const dbService = require('../services/db.service');
 const auth = require('../policies/auth.policy');
+const shutdown = require('../policies/shutdown.policy');
 const DB = dbService(environment, config.migrate).start();
 
 //Api handler
@@ -68,6 +70,11 @@ app.all('/EasyTV_HBMM_Restful_WS/\personalize|\interaction/*', (req, res, next) 
 app.use('/EasyTV_HBMM_Restful_WS', mappedAuthRoutes);
 app.use('/EasyTV_HBMM_Restful_WS', mappedOpenRoutes);
 
+
+//set server shutdown policy
+createTerminus(server, shutdown)
+
+//server listen
 server.listen(config.port, () => {
 	if (environment !== 'production' &&
 	 environment !== 'development' &&

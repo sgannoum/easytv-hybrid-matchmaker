@@ -4,7 +4,6 @@
 var hbmmImpl =  require('../lib/HybridMatchMakerImpl.js').hbmmImpl
 const JWTService = require('../services/auth.service');
 const usersInfoHandler = require("../lib/UsersInfoHandler.js").instance;
-const sequelize = require('../config/database');
 const UserModel = require('../models/UserModel');
 const ModificationSuggestions = require('../models/ModificationSuggestions');
 

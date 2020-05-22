@@ -4,6 +4,7 @@
   "version": "1.4.7",
   "author": "EasyTV",
   "dependencies": {
+    "@godaddy/terminus": "^4.4.1",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
@@ -12,8 +13,7 @@
     "jsonwebtoken": "^8.2.1",
     "request": "2.81.0",
     "request-promise": "^4.2.4",
-    "swagger-ui-express": "^4.1.2",
-    "xml-js": "^1.6.11"
+    "swagger-ui-express": "^4.1.2"
   },
   "devDependencies": {
     "bcrypt-nodejs": "^0.0.3",
