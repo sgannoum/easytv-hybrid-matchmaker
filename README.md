@@ -16,6 +16,12 @@ Then change to the newly created directory and run the following command:
 	
 Per default, the matchmaker will listen on port 8087. You can change that in `config/index.js` or by setting the PORT environment variable.
 
+## Docker image
+
+You can build a docker image from the docker file contained in the hybrid matchmaker by running the following command:
+
+	docker build --tag hbmm:v1 .
+
 ## Licence
 
 The code of the EasyTV hybrid Matchmaker's runtime component is available under the [Apache 2.0 license](https://github.com/sgannoum/easytv-hybrid-matchmaker-certh/blob/master/LICENSE.txt).
