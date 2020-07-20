@@ -14,6 +14,8 @@ const ModificationSuggestions = sequelize.define('ModificationSuggestions', {
   id: {
 	    type: Sequelize.INTEGER,
 	    primaryKey: true,
+	    onDelete: 'CASCADE',
+	    onUpdate: 'CASCADE',
 	    references: {
 	        model: UserModel,
 	        key: 'id',

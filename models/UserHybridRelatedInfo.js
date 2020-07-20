@@ -14,6 +14,8 @@ const UserHybridRelatedInfo = sequelize.define('UserHybridRelatedInfo', {
   id: {
 	    type: Sequelize.INTEGER,
 	    primaryKey: true,
+	    onDelete: 'CASCADE',
+	    onUpdate: 'CASCADE',
 	    references: {
 	        model: Users,
 	        key: 'id',

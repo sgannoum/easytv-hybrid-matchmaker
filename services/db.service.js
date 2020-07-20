@@ -46,7 +46,7 @@ const dbService = (environment, migrate) => {
       const umzug = new Umzug({
         migrations: {
           // indicates the folder containing the migration .js files
-          path: path.join('api/', './migrations'),
+          path: './migrations',
           // inject sequelize's QueryInterface in the migrations
           params: [
             database.getQueryInterface()

@@ -13,6 +13,8 @@ const tableName = 'InteractionEvents';
 const InteractionEvent = sequelize.define('InteractionEvents', {
   modelId: {
 	    type: Sequelize.INTEGER,
+	    onDelete: 'CASCADE',
+	    onUpdate: 'CASCADE',
 	    references: {
 	        model: UserModel,
 	        key: 'id',
