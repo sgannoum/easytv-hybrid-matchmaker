@@ -86,6 +86,8 @@ const ContentPersonalization = () => {
 			var rbmm_profile;
 			const user_profile = req.body.user_profile
 			var user_content = req.body.user_content
+			const media = req.body.user_content.media
+			const episode = req.body.user_content.episode
 					
 			var rbmm_options = {
 				    method: 'POST',
@@ -97,7 +99,7 @@ const ContentPersonalization = () => {
 			
 			var accessibility_options = {
 				    method: 'GET',
-				    uri: 'http://138.4.47.33:8080/media/services/Com_si_fos_ahir/com_si_fos_ahir_capitol_428',
+				    uri: `http://138.4.47.33:8080/media/services/${media}/${episode}`,
 				    headers: {
 				        'Accept': '*',
 				        'Accept-Encoding': 'gzip, deflate',
