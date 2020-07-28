@@ -7,13 +7,12 @@ services:
     networks:
       - easytv_net
     depends_on:
-      - personalization_db
       - stmm_rt
     environment:
       STMM_HOST: "stmm_rt"
       RBMM_HOST: "rbmm"
       STMM_PORT: "8077"
-      RBMM_PORT: "8080"
+      RBMM_PORT: "8081"
       DB_HOST: "personalization_db"
       DB_PORT: "3306"
       DB_NAME: "easytv"
@@ -37,7 +36,7 @@ services:
     networks:
       - easytv_net
     environment:
-      PORT: "8080"
+      PORT: "8081"
 
   hbmm:
     image: hbmm:v1
@@ -51,12 +50,14 @@ services:
       STMM_HOST: "stmm_rt"
       RBMM_HOST: "rbmm"
       STMM_PORT: "8077"
-      RBMM_PORT: "8080"
+      RBMM_PORT: "8081"
       DB_HOST: "personalization_db"
       DB_PORT: "3306"
       DB_NAME: "easytv"
       DB_USER: "easytv"
+      NODE_ENV: "production"
       DB_PASSWORD_FILE: "/run/secrets/hpapidb_pass"
+      JWT_SECRET: "/run/secrets/jwt_secret"
       PORT: "8087"
       http_proxy: "http://161.27.206.250:8080"
       https_proxy: "http://161.27.206.250:8080"
@@ -64,6 +65,7 @@ services:
     secrets:
       - hpapidb_pass
       - hpapidbroot_password
+      - jwt_secret
     ports:
       - "8087:8087"
 
@@ -71,6 +73,8 @@ secrets:
   hpapidb_pass:
     external: true
   hpapidbroot_password:
+    external: true
+  jwt_secret:
     external: true
 
 networks:
