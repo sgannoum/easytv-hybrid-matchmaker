@@ -32,7 +32,7 @@ const InteractionEventsHandler = () => {
 	    	
 	    	 //profile modification suggestions
 	    	 var profileSuggestion = await ModificationSuggestions.findOne({
-			    			 					 where: { id: userModel.userId },
+			    			 					 where: { id: userModel.id },
 									    		 transaction: t, 
 								    	         lock: t.LOCK.UPDATE })
 								    	         
@@ -43,7 +43,7 @@ const InteractionEventsHandler = () => {
 	    	 //reset user associated suggestions
 	    	 await ModificationSuggestions.update (
 					 values  = { suggestion: {} },
-					 options = { where: { id: userModel.userId },
+					 options = { where: { id: userModel.id },
 		    			 	     transaction: t})
 		    			 	    
 		     return profileSuggestion  
